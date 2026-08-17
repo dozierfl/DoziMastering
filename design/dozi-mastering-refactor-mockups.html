@@ -1,0 +1,495 @@
+<div id="dozi-mastering-concept">
+  <style>
+    #dozi-mastering-concept {
+      color: light-dark(#17212b, #edf5f5);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      font-size: 13px;
+      width: 100%;
+    }
+    #dozi-mastering-concept * { box-sizing: border-box; }
+    #dozi-mastering-concept button, #dozi-mastering-concept select, #dozi-mastering-concept input { font: inherit; }
+    #dozi-mastering-concept .dozi-window {
+      background: light-dark(#e8edef, #080d12);
+      border: 1px solid light-dark(#bec9cd, #26323b);
+      border-radius: 16px;
+      box-shadow: 0 24px 70px light-dark(rgba(24,38,47,.18), rgba(0,0,0,.58));
+      min-height: 760px;
+      overflow: hidden;
+      position: relative;
+    }
+    #dozi-mastering-concept .dozi-titlebar {
+      align-items: center;
+      background: light-dark(#f4f7f8, #10171e);
+      border-bottom: 1px solid light-dark(#c9d2d5, #25313a);
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(260px, 1.3fr) auto minmax(250px, 1fr);
+      min-height: 76px;
+      padding: 12px 18px;
+    }
+    #dozi-mastering-concept .dozi-brand-group { align-items: center; display: flex; gap: 12px; min-width: 0; }
+    #dozi-mastering-concept .dozi-mark {
+      align-items: center;
+      background: linear-gradient(145deg, #3ce0bd, #269fc4);
+      border: 0;
+      border-radius: 9px;
+      color: #061115;
+      cursor: pointer;
+      display: flex;
+      font-size: 17px;
+      font-weight: 500;
+      height: 42px;
+      justify-content: center;
+      letter-spacing: -.06em;
+      width: 42px;
+    }
+    #dozi-mastering-concept .dozi-song { min-width: 0; }
+    #dozi-mastering-concept .dozi-song strong { display: block; font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #dozi-mastering-concept .dozi-song span { color: light-dark(#61717a, #90a2ad); display: block; font-size: 11px; margin-top: 3px; }
+    #dozi-mastering-concept .dozi-tabs {
+      align-items: center;
+      background: light-dark(#dce4e7, #0a1117);
+      border: 1px solid light-dark(#c7d0d3, #27323b);
+      border-radius: 9px;
+      display: flex;
+      padding: 3px;
+    }
+    #dozi-mastering-concept .dozi-tab {
+      background: transparent;
+      border: 0;
+      border-radius: 6px;
+      color: light-dark(#52636c, #8fa0ab);
+      cursor: pointer;
+      padding: 8px 13px;
+    }
+    #dozi-mastering-concept .dozi-tab.is-active { background: light-dark(#fff, #25313b); color: light-dark(#101b22, #f2f6f7); box-shadow: 0 1px 4px rgba(0,0,0,.14); }
+    #dozi-mastering-concept .dozi-top-actions { align-items: center; display: flex; gap: 8px; justify-content: flex-end; min-width: 0; }
+    #dozi-mastering-concept .dozi-select {
+      background: light-dark(#fff, #182129);
+      border: 1px solid light-dark(#c6d0d3, #33414b);
+      border-radius: 7px;
+      color: inherit;
+      height: 34px;
+      max-width: 160px;
+      padding: 0 26px 0 9px;
+    }
+    #dozi-mastering-concept .dozi-icon-button, #dozi-mastering-concept .dozi-button {
+      align-items: center;
+      background: light-dark(#f8fafb, #182129);
+      border: 1px solid light-dark(#c6d0d3, #33414b);
+      border-radius: 7px;
+      color: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 7px;
+      height: 34px;
+      justify-content: center;
+      padding: 0 11px;
+    }
+    #dozi-mastering-concept .dozi-icon-button { padding: 0; width: 34px; }
+    #dozi-mastering-concept .dozi-button.is-primary { background: #35d3b5; border-color: #35d3b5; color: #061210; font-weight: 500; }
+    #dozi-mastering-concept .dozi-button.is-warm { background: #dda35e; border-color: #dda35e; color: #181008; }
+    #dozi-mastering-concept .dozi-status-strip {
+      align-items: center;
+      background: light-dark(#f6f9f9, #0d141a);
+      border-bottom: 1px solid light-dark(#d2dade, #202c35);
+      display: flex;
+      gap: 14px;
+      min-height: 35px;
+      padding: 0 19px;
+    }
+    #dozi-mastering-concept .dozi-state { align-items: center; color: light-dark(#52636c, #899aa5); display: flex; font-size: 11px; gap: 6px; }
+    #dozi-mastering-concept .dozi-state::before { background: #35d3b5; border-radius: 50%; content: ""; height: 6px; width: 6px; }
+    #dozi-mastering-concept .dozi-state.is-pending::before { background: #dda35e; }
+    #dozi-mastering-concept .dozi-saved { color: light-dark(#6f7d84, #778995); font-size: 11px; margin-left: auto; }
+    #dozi-mastering-concept .dozi-view { display: none; min-height: 555px; padding: 18px; }
+    #dozi-mastering-concept .dozi-view.is-active { display: block; }
+    #dozi-mastering-concept .dozi-console-grid { display: grid; gap: 16px; grid-template-columns: minmax(175px,.8fr) minmax(380px,2fr) minmax(175px,.8fr); }
+    #dozi-mastering-concept .dozi-section {
+      background: light-dark(#f8fafb, #111920);
+      border: 1px solid light-dark(#ccd5d8, #26333c);
+      border-radius: 11px;
+      padding: 15px;
+    }
+    #dozi-mastering-concept .dozi-section-title { align-items: center; color: light-dark(#5d6b73, #91a1ab); display: flex; font-size: 11px; justify-content: space-between; letter-spacing: .09em; margin-bottom: 13px; text-transform: uppercase; }
+    #dozi-mastering-concept .dozi-big-knob-wrap { align-items: center; display: flex; flex-direction: column; min-height: 194px; justify-content: center; }
+    #dozi-mastering-concept .dozi-knob {
+      align-items: center;
+      background: conic-gradient(from 220deg, #27343d 0deg, #35d3b5 210deg, #27343d 211deg 280deg, transparent 281deg);
+      border: 7px solid light-dark(#dce3e5, #202a32);
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 2px light-dark(#bec9cc, #080d11), 0 9px 20px rgba(0,0,0,.24);
+      display: flex;
+      height: 112px;
+      justify-content: center;
+      position: relative;
+      width: 112px;
+    }
+    #dozi-mastering-concept .dozi-knob::after { background: light-dark(#eef2f3, #151d23); border-radius: 50%; box-shadow: inset 0 1px 0 rgba(255,255,255,.09); content: ""; height: 76px; width: 76px; }
+    #dozi-mastering-concept .dozi-knob::before { background: #35d3b5; border-radius: 2px; content: ""; height: 25px; left: calc(50% - 1px); position: absolute; top: 10px; transform: rotate(28deg); transform-origin: 1px 46px; width: 3px; z-index: 2; }
+    #dozi-mastering-concept .dozi-knob.is-ceiling { background: conic-gradient(from 220deg, #27343d 0deg, #dda35e 185deg, #27343d 186deg 280deg, transparent 281deg); }
+    #dozi-mastering-concept .dozi-knob.is-ceiling::before { background: #dda35e; transform: rotate(4deg); }
+    #dozi-mastering-concept .dozi-knob-value { font-size: 21px; font-variant-numeric: tabular-nums; margin-top: 14px; }
+    #dozi-mastering-concept .dozi-knob-label { color: light-dark(#68777f, #8799a4); font-size: 11px; margin-top: 3px; }
+    #dozi-mastering-concept .dozi-tone-grid { display: grid; gap: 12px; grid-template-columns: repeat(4,1fr); }
+    #dozi-mastering-concept .dozi-tone-control { text-align: center; }
+    #dozi-mastering-concept .dozi-small-knob {
+      background: radial-gradient(circle at 38% 32%, light-dark(#fbfcfc, #35434d), light-dark(#cbd4d7, #151d23) 68%);
+      border: 1px solid light-dark(#b8c4c8, #3b4852);
+      border-radius: 50%;
+      box-shadow: 0 5px 10px rgba(0,0,0,.2);
+      height: 64px;
+      margin: 3px auto 9px;
+      position: relative;
+      width: 64px;
+    }
+    #dozi-mastering-concept .dozi-small-knob::after { background: #35d3b5; border-radius: 3px; content: ""; height: 20px; left: 30px; position: absolute; top: 5px; transform: rotate(18deg); transform-origin: 2px 27px; width: 3px; }
+    #dozi-mastering-concept .dozi-small-knob.is-flat::after { transform: rotate(0deg); }
+    #dozi-mastering-concept .dozi-tone-control strong { display: block; font-size: 12px; font-weight: 500; }
+    #dozi-mastering-concept .dozi-tone-control span { color: light-dark(#68777f, #8799a4); font-size: 11px; }
+    #dozi-mastering-concept .dozi-meter-section { grid-column: 1 / -1; }
+    #dozi-mastering-concept .dozi-meter-layout { align-items: end; display: grid; gap: 18px; grid-template-columns: 1fr 1fr 150px; }
+    #dozi-mastering-concept .dozi-meter-pair { display: grid; gap: 7px; }
+    #dozi-mastering-concept .dozi-meter-row { align-items: center; display: grid; gap: 9px; grid-template-columns: 15px 1fr 52px; }
+    #dozi-mastering-concept .dozi-meter-track { background: light-dark(#dce3e5, #1c2730); border-radius: 3px; height: 9px; overflow: hidden; position: relative; }
+    #dozi-mastering-concept .dozi-meter-fill { background: linear-gradient(90deg,#35d3b5 0 75%,#dda35e 90%,#e86767 100%); height: 100%; width: 82%; }
+    #dozi-mastering-concept .dozi-meter-fill.is-right { width: 77%; }
+    #dozi-mastering-concept .dozi-meter-number { font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
+    #dozi-mastering-concept .dozi-loudness-readout { display: grid; gap: 7px; grid-template-columns: 1fr 1fr; }
+    #dozi-mastering-concept .dozi-loudness-cell { background: light-dark(#eef2f3, #0c1318); border-radius: 7px; padding: 8px; }
+    #dozi-mastering-concept .dozi-loudness-cell span { color: light-dark(#6c7b83, #81939e); display: block; font-size: 10px; }
+    #dozi-mastering-concept .dozi-loudness-cell strong { display: block; font-size: 15px; font-variant-numeric: tabular-nums; font-weight: 500; margin-top: 3px; }
+    #dozi-mastering-concept .dozi-console-actions { align-items: stretch; display: grid; gap: 16px; grid-column: 1 / -1; grid-template-columns: 1fr auto; }
+    #dozi-mastering-concept .dozi-assistant-peek { align-items: center; display: flex; gap: 12px; }
+    #dozi-mastering-concept .dozi-assistant-orb { background: radial-gradient(circle at 35% 30%,#8af6e0,#35d3b5 34%,#197d91 76%); border-radius: 50%; box-shadow: 0 0 24px rgba(53,211,181,.24); height: 38px; flex: 0 0 auto; width: 38px; }
+    #dozi-mastering-concept .dozi-assistant-copy strong { display: block; font-weight: 500; }
+    #dozi-mastering-concept .dozi-assistant-copy span { color: light-dark(#64747c, #8b9ca7); display: block; font-size: 11px; margin-top: 2px; }
+    #dozi-mastering-concept .dozi-monitor-switches { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    #dozi-mastering-concept .dozi-chip { background: light-dark(#e6ecee, #1a252d); border: 1px solid light-dark(#c8d1d4, #31404a); border-radius: 6px; color: inherit; cursor: pointer; padding: 8px 10px; }
+    #dozi-mastering-concept .dozi-chip.is-on { background: rgba(53,211,181,.16); border-color: #35d3b5; color: light-dark(#116d5c, #75e8d2); }
+    #dozi-mastering-concept .dozi-wave-header, #dozi-mastering-concept .dozi-chain-header, #dozi-mastering-concept .dozi-deliver-header { align-items: center; display: flex; justify-content: space-between; margin-bottom: 13px; }
+    #dozi-mastering-concept .dozi-view-heading strong { display: block; font-size: 18px; font-weight: 500; }
+    #dozi-mastering-concept .dozi-view-heading span { color: light-dark(#68777f, #8799a4); display: block; font-size: 11px; margin-top: 3px; }
+    #dozi-mastering-concept .dozi-wave-panel { background: light-dark(#f7fafb, #0d151b); border: 1px solid light-dark(#cbd5d8, #26333c); border-radius: 11px; overflow: hidden; }
+    #dozi-mastering-concept .dozi-time-ruler { color: light-dark(#728087, #748792); display: flex; font-size: 10px; justify-content: space-between; padding: 10px 16px 7px; }
+    #dozi-mastering-concept .dozi-wave-canvas { height: 330px; position: relative; }
+    #dozi-mastering-concept .dozi-wave-canvas svg { display: block; height: 100%; width: 100%; }
+    #dozi-mastering-concept .dozi-selection { background: rgba(53,211,181,.11); border-left: 1px solid #35d3b5; border-right: 1px solid #35d3b5; bottom: 0; left: 36%; position: absolute; top: 0; width: 24%; }
+    #dozi-mastering-concept .dozi-playhead { background: #f3f7f7; bottom: 0; box-shadow: 0 0 8px rgba(255,255,255,.55); left: 49%; position: absolute; top: 0; width: 1px; }
+    #dozi-mastering-concept .dozi-playhead::before { background: #35d3b5; border-radius: 50%; content: ""; height: 9px; left: -4px; position: absolute; top: 0; width: 9px; }
+    #dozi-mastering-concept .dozi-wave-lanes { border-top: 1px solid light-dark(#d5dddf, #26323c); display: grid; grid-template-columns: 1fr 1fr 1fr; }
+    #dozi-mastering-concept .dozi-wave-lane { padding: 11px 14px; }
+    #dozi-mastering-concept .dozi-wave-lane + .dozi-wave-lane { border-left: 1px solid light-dark(#d5dddf, #26323c); }
+    #dozi-mastering-concept .dozi-wave-lane span { color: light-dark(#68777f, #8799a4); display: block; font-size: 10px; }
+    #dozi-mastering-concept .dozi-wave-lane strong { display: block; font-weight: 500; margin-top: 3px; }
+    #dozi-mastering-concept .dozi-chain-flow { align-items: stretch; display: grid; gap: 9px; grid-template-columns: repeat(8,minmax(90px,1fr)); }
+    #dozi-mastering-concept .dozi-module { background: light-dark(#f7fafb, #111920); border: 1px solid light-dark(#cbd5d8, #293640); border-radius: 9px; cursor: pointer; min-height: 150px; padding: 11px; position: relative; }
+    #dozi-mastering-concept .dozi-module.is-selected { border-color: #35d3b5; box-shadow: inset 0 0 0 1px #35d3b5; }
+    #dozi-mastering-concept .dozi-module.is-bypassed { opacity: .48; }
+    #dozi-mastering-concept .dozi-module-index { color: light-dark(#7e8a90, #667a86); font-size: 10px; }
+    #dozi-mastering-concept .dozi-module strong { display: block; font-size: 11px; font-weight: 500; margin-top: 8px; min-height: 28px; }
+    #dozi-mastering-concept .dozi-module-activity { align-items: end; display: flex; gap: 3px; height: 42px; margin: 12px 0; }
+    #dozi-mastering-concept .dozi-module-activity i { background: #35d3b5; display: block; flex: 1; opacity: .8; }
+    #dozi-mastering-concept .dozi-module-activity i:nth-child(1) { height: 22%; }
+    #dozi-mastering-concept .dozi-module-activity i:nth-child(2) { height: 70%; }
+    #dozi-mastering-concept .dozi-module-activity i:nth-child(3) { height: 44%; }
+    #dozi-mastering-concept .dozi-module-activity i:nth-child(4) { height: 84%; }
+    #dozi-mastering-concept .dozi-module small { color: light-dark(#6d7b82, #83959f); font-size: 10px; }
+    #dozi-mastering-concept .dozi-chain-inspector { display: grid; gap: 16px; grid-template-columns: 230px 1fr; margin-top: 15px; }
+    #dozi-mastering-concept .dozi-gr-ring { align-items: center; background: conic-gradient(#dda35e 0 48deg, light-dark(#dbe2e4, #26323b) 49deg 360deg); border-radius: 50%; display: flex; height: 120px; justify-content: center; margin: 8px auto; width: 120px; }
+    #dozi-mastering-concept .dozi-gr-ring div { align-items: center; background: light-dark(#f8fafb, #111920); border-radius: 50%; display: flex; flex-direction: column; height: 91px; justify-content: center; width: 91px; }
+    #dozi-mastering-concept .dozi-gr-ring strong { font-size: 21px; font-weight: 500; }
+    #dozi-mastering-concept .dozi-gr-ring span { color: light-dark(#6c7b82, #82939e); font-size: 10px; }
+    #dozi-mastering-concept .dozi-parameter-grid { display: grid; gap: 14px; grid-template-columns: repeat(3,1fr); }
+    #dozi-mastering-concept .dozi-parameter label { color: light-dark(#617079, #8fa0aa); display: flex; font-size: 11px; justify-content: space-between; }
+    #dozi-mastering-concept .dozi-parameter input { accent-color: #35d3b5; margin-top: 8px; width: 100%; }
+    #dozi-mastering-concept .dozi-deliver-grid { display: grid; gap: 16px; grid-template-columns: 1.25fr .9fr; }
+    #dozi-mastering-concept .dozi-validation-grid { display: grid; gap: 9px; grid-template-columns: repeat(3,1fr); }
+    #dozi-mastering-concept .dozi-validation-item { background: light-dark(#edf2f3, #0b1217); border-radius: 8px; padding: 12px; }
+    #dozi-mastering-concept .dozi-validation-item span { color: light-dark(#65757d, #8496a1); display: block; font-size: 10px; }
+    #dozi-mastering-concept .dozi-validation-item strong { display: block; font-size: 18px; font-variant-numeric: tabular-nums; font-weight: 500; margin-top: 5px; }
+    #dozi-mastering-concept .dozi-validation-item small { color: #25a88e; display: block; font-size: 10px; margin-top: 3px; }
+    #dozi-mastering-concept .dozi-export-form { display: grid; gap: 11px; }
+    #dozi-mastering-concept .dozi-field label { color: light-dark(#617079, #8fa0aa); display: block; font-size: 10px; margin-bottom: 5px; }
+    #dozi-mastering-concept .dozi-field select, #dozi-mastering-concept .dozi-field input { background: light-dark(#fff, #0b1217); border: 1px solid light-dark(#c6d0d3, #33414b); border-radius: 7px; color: inherit; height: 36px; padding: 0 9px; width: 100%; }
+    #dozi-mastering-concept .dozi-compliance { align-items: center; background: rgba(53,211,181,.12); border: 1px solid rgba(53,211,181,.45); border-radius: 8px; display: flex; gap: 9px; margin-top: 13px; padding: 11px; }
+    #dozi-mastering-concept .dozi-compliance i { color: #35d3b5; }
+    #dozi-mastering-concept .dozi-start { align-items: center; display: flex; justify-content: center; min-height: 550px; text-align: center; }
+    #dozi-mastering-concept .dozi-start-inner { max-width: 560px; }
+    #dozi-mastering-concept .dozi-start-orb { background: radial-gradient(circle at 34% 29%,#a4f6e5,#35d3b5 31%,#1b8296 65%,#0d2832); border-radius: 50%; box-shadow: 0 0 55px rgba(53,211,181,.22); height: 78px; margin: 0 auto 22px; width: 78px; }
+    #dozi-mastering-concept .dozi-start h2 { font-size: 26px; font-weight: 500; margin: 0; }
+    #dozi-mastering-concept .dozi-start p { color: light-dark(#65747c, #8b9ca7); line-height: 1.55; margin: 9px auto 22px; }
+    #dozi-mastering-concept .dozi-drop-zone { background: light-dark(rgba(255,255,255,.52), rgba(17,25,32,.72)); border: 1px dashed light-dark(#aebcc1, #40515c); border-radius: 12px; padding: 26px; }
+    #dozi-mastering-concept .dozi-start-actions { display: flex; gap: 9px; justify-content: center; margin-top: 14px; }
+    #dozi-mastering-concept .dozi-recent { border-top: 1px solid light-dark(#d1d9dc, #26333c); display: grid; gap: 8px; grid-template-columns: repeat(2,1fr); margin-top: 19px; padding-top: 17px; text-align: left; }
+    #dozi-mastering-concept .dozi-recent button { background: transparent; border: 0; color: inherit; cursor: pointer; padding: 7px; text-align: left; }
+    #dozi-mastering-concept .dozi-recent strong { display: block; font-size: 11px; font-weight: 500; }
+    #dozi-mastering-concept .dozi-recent span { color: light-dark(#6b7a82, #82949e); display: block; font-size: 10px; margin-top: 2px; }
+    #dozi-mastering-concept .dozi-transport {
+      align-items: center;
+      background: light-dark(#f4f7f8, #0d141a);
+      border-top: 1px solid light-dark(#c8d2d5, #26323c);
+      display: grid;
+      gap: 14px;
+      grid-template-columns: auto minmax(220px,1fr) auto;
+      min-height: 71px;
+      padding: 10px 18px;
+    }
+    #dozi-mastering-concept .dozi-transport-buttons { align-items: center; display: flex; gap: 7px; }
+    #dozi-mastering-concept .dozi-play-button { background: #35d3b5; border: 0; border-radius: 50%; color: #061210; cursor: pointer; height: 42px; width: 42px; }
+    #dozi-mastering-concept .dozi-overview { min-width: 0; }
+    #dozi-mastering-concept .dozi-overview-line { background: light-dark(#cad4d7, #26323c); border-radius: 2px; height: 4px; position: relative; }
+    #dozi-mastering-concept .dozi-overview-line::before { background: #35d3b5; border-radius: 2px; content: ""; height: 100%; left: 0; position: absolute; width: 49%; }
+    #dozi-mastering-concept .dozi-overview-line::after { background: #f4f7f7; border: 2px solid #35d3b5; border-radius: 50%; content: ""; height: 11px; left: calc(49% - 5px); position: absolute; top: -4px; width: 11px; }
+    #dozi-mastering-concept .dozi-time { display: flex; font-size: 11px; font-variant-numeric: tabular-nums; justify-content: space-between; margin-top: 8px; }
+    #dozi-mastering-concept .dozi-monitor { align-items: center; display: flex; gap: 8px; }
+    #dozi-mastering-concept .dozi-volume { min-width: 118px; }
+    #dozi-mastering-concept .dozi-volume label { color: light-dark(#65747c, #8b9ca7); display: flex; font-size: 10px; justify-content: space-between; }
+    #dozi-mastering-concept .dozi-volume input { accent-color: #35d3b5; width: 100%; }
+    #dozi-mastering-concept .dozi-assistant-panel { background: light-dark(#f7fafb, #10181f); border-left: 1px solid light-dark(#c7d1d4, #2c3943); bottom: 71px; box-shadow: -18px 0 40px rgba(0,0,0,.26); display: none; padding: 18px; position: absolute; right: 0; top: 112px; width: min(390px, 92%); z-index: 5; }
+    #dozi-mastering-concept .dozi-assistant-panel.is-open { display: flex; flex-direction: column; }
+    #dozi-mastering-concept .dozi-assistant-head { align-items: center; display: flex; justify-content: space-between; }
+    #dozi-mastering-concept .dozi-assistant-head strong { font-size: 16px; font-weight: 500; }
+    #dozi-mastering-concept .dozi-assistant-history { display: grid; flex: 1; gap: 11px; margin: 20px 0; }
+    #dozi-mastering-concept .dozi-message { border-radius: 10px; line-height: 1.45; max-width: 88%; padding: 10px 12px; }
+    #dozi-mastering-concept .dozi-message.is-user { background: light-dark(#dfe7e9, #24313a); justify-self: end; }
+    #dozi-mastering-concept .dozi-message.is-dozi { background: rgba(53,211,181,.13); border: 1px solid rgba(53,211,181,.35); }
+    #dozi-mastering-concept .dozi-change-summary { background: light-dark(#e9eff0, #0b1217); border-radius: 8px; display: flex; justify-content: space-between; margin-top: 8px; padding: 8px; }
+    #dozi-mastering-concept .dozi-change-summary span { color: light-dark(#617179, #899ba6); }
+    #dozi-mastering-concept .dozi-assistant-entry { display: grid; gap: 8px; grid-template-columns: 1fr auto; }
+    #dozi-mastering-concept .dozi-assistant-entry input { background: light-dark(#fff, #0b1217); border: 1px solid light-dark(#bec9cd, #34434d); border-radius: 8px; color: inherit; height: 40px; padding: 0 10px; }
+    @media (max-width: 900px) {
+      #dozi-mastering-concept .dozi-titlebar { grid-template-columns: 1fr auto; }
+      #dozi-mastering-concept .dozi-tabs { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
+      #dozi-mastering-concept .dozi-top-actions .dozi-select:last-of-type { display: none; }
+      #dozi-mastering-concept .dozi-console-grid { grid-template-columns: 1fr 1.5fr; }
+      #dozi-mastering-concept .dozi-console-grid > .dozi-section:nth-child(3) { grid-column: 1 / -1; }
+      #dozi-mastering-concept .dozi-chain-flow { grid-template-columns: repeat(4,1fr); }
+      #dozi-mastering-concept .dozi-deliver-grid { grid-template-columns: 1fr; }
+      #dozi-mastering-concept .dozi-transport { grid-template-columns: auto 1fr; }
+      #dozi-mastering-concept .dozi-monitor { grid-column: 1 / -1; justify-content: flex-end; }
+    }
+    @media (max-width: 620px) {
+      #dozi-mastering-concept .dozi-window { border-radius: 10px; }
+      #dozi-mastering-concept .dozi-titlebar { display: flex; flex-wrap: wrap; }
+      #dozi-mastering-concept .dozi-brand-group { flex: 1; }
+      #dozi-mastering-concept .dozi-tabs { order: 3; overflow-x: auto; width: 100%; }
+      #dozi-mastering-concept .dozi-top-actions .dozi-select { display: none; }
+      #dozi-mastering-concept .dozi-view { padding: 11px; }
+      #dozi-mastering-concept .dozi-console-grid { grid-template-columns: 1fr; }
+      #dozi-mastering-concept .dozi-console-grid > .dozi-section:nth-child(3), #dozi-mastering-concept .dozi-meter-section, #dozi-mastering-concept .dozi-console-actions { grid-column: auto; }
+      #dozi-mastering-concept .dozi-tone-grid { grid-template-columns: repeat(2,1fr); }
+      #dozi-mastering-concept .dozi-meter-layout, #dozi-mastering-concept .dozi-console-actions, #dozi-mastering-concept .dozi-chain-inspector { grid-template-columns: 1fr; }
+      #dozi-mastering-concept .dozi-chain-flow { grid-template-columns: repeat(2,1fr); }
+      #dozi-mastering-concept .dozi-parameter-grid, #dozi-mastering-concept .dozi-validation-grid { grid-template-columns: repeat(2,1fr); }
+      #dozi-mastering-concept .dozi-transport { grid-template-columns: 1fr; }
+      #dozi-mastering-concept .dozi-transport-buttons, #dozi-mastering-concept .dozi-monitor { justify-content: center; }
+      #dozi-mastering-concept .dozi-status-strip .dozi-state:nth-child(n+3) { display: none; }
+    }
+  </style>
+
+  <section class="dozi-window" aria-label="Interactive high fidelity Dozi Mastering interface concept">
+    <header class="dozi-titlebar">
+      <div class="dozi-brand-group">
+        <button class="dozi-mark" type="button" data-open-view="start" aria-label="Show start screen">DZ</button>
+        <div class="dozi-song">
+          <strong>Midnight on Auburn Ave</strong>
+          <span>48 kHz · 24-bit WAV · Stereo · 3:42</span>
+        </div>
+      </div>
+      <nav class="dozi-tabs" aria-label="Mastering views">
+        <button class="dozi-tab is-active" type="button" data-open-view="console">Console</button>
+        <button class="dozi-tab" type="button" data-open-view="wave">Wave</button>
+        <button class="dozi-tab" type="button" data-open-view="chain">Chain</button>
+        <button class="dozi-tab" type="button" data-open-view="deliver">Deliver</button>
+      </nav>
+      <div class="dozi-top-actions">
+        <select class="dozi-select" aria-label="Mastering style"><option>Suno WAV Remaster</option><option>Balanced Streaming</option><option>Modern Pop</option></select>
+        <select class="dozi-select" aria-label="Delivery target"><option>Spotify Loud</option><option>Spotify Normal</option><option>Custom</option></select>
+        <button class="dozi-icon-button" type="button" aria-label="Undo"><i data-lucide="undo-2" aria-hidden="true"></i></button>
+        <button class="dozi-icon-button" type="button" aria-label="Project menu"><i data-lucide="folder-open" aria-hidden="true"></i></button>
+      </div>
+    </header>
+
+    <div class="dozi-status-strip">
+      <span class="dozi-state">Loaded</span><span class="dozi-state">Analyzed</span><span class="dozi-state is-pending">Revision pending</span><span class="dozi-state">Preview ready</span>
+      <span class="dozi-saved">Saved 2 min ago</span>
+    </div>
+
+    <main>
+      <section class="dozi-view" data-view="start">
+        <div class="dozi-start">
+          <div class="dozi-start-inner">
+            <div class="dozi-start-orb"></div>
+            <h2>Bring the mix. Keep the music.</h2>
+            <p>Start a focused mastering session with analysis, safe targets, reversible revisions, and verified delivery.</p>
+            <div class="dozi-drop-zone">
+              <strong>Drop a stereo mix here</strong>
+              <p>WAV, AIFF, FLAC, or MP3</p>
+              <div class="dozi-start-actions"><button class="dozi-button is-primary" type="button" data-open-view="console">Choose Mix</button><button class="dozi-button" type="button">Open Project</button></div>
+            </div>
+            <div class="dozi-recent">
+              <button type="button" data-open-view="console"><strong>Midnight on Auburn Ave</strong><span>Last opened yesterday · Suno WAV Remaster</span></button>
+              <button type="button" data-open-view="console"><strong>Blue Room Final</strong><span>Opened Aug 15 · Balanced Streaming</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dozi-view is-active" data-view="console">
+        <div class="dozi-console-grid">
+          <article class="dozi-section">
+            <div class="dozi-section-title"><span>Input</span><span>-6.8 LUFS source</span></div>
+            <div class="dozi-big-knob-wrap"><div class="dozi-knob"></div><div class="dozi-knob-value">-5.2 dB</div><div class="dozi-knob-label">Input gain</div></div>
+          </article>
+          <article class="dozi-section">
+            <div class="dozi-section-title"><span>Tonal shape</span><span>Changes are reversible</span></div>
+            <div class="dozi-tone-grid">
+              <div class="dozi-tone-control"><div class="dozi-small-knob"></div><strong>Low</strong><span>-0.50 dB</span></div>
+              <div class="dozi-tone-control"><div class="dozi-small-knob is-flat"></div><strong>Body</strong><span>0.00 dB</span></div>
+              <div class="dozi-tone-control"><div class="dozi-small-knob"></div><strong>Presence</strong><span>+0.25 dB</span></div>
+              <div class="dozi-tone-control"><div class="dozi-small-knob is-flat"></div><strong>Air</strong><span>0.00 dB</span></div>
+            </div>
+            <div class="dozi-parameter-grid" style="margin-top:22px">
+              <div class="dozi-parameter"><label><span>Width</span><span>98%</span></label><input type="range" min="0" max="125" value="98" aria-label="Width 98 percent"></div>
+              <div class="dozi-parameter"><label><span>Character</span><span>Clean</span></label><input type="range" min="0" max="100" value="16" aria-label="Character clean"></div>
+              <div class="dozi-parameter"><label><span>Glue</span><span>Minimal</span></label><input type="range" min="0" max="100" value="8" aria-label="Glue minimal"></div>
+            </div>
+          </article>
+          <article class="dozi-section">
+            <div class="dozi-section-title"><span>Master output</span><span>Spotify Loud</span></div>
+            <div class="dozi-big-knob-wrap"><div class="dozi-knob is-ceiling"></div><div class="dozi-knob-value">-2.0 dBTP</div><div class="dozi-knob-label">True-peak ceiling</div></div>
+          </article>
+          <article class="dozi-section dozi-meter-section">
+            <div class="dozi-section-title"><span>Meter bridge</span><span>Processed · Post limiter</span></div>
+            <div class="dozi-meter-layout">
+              <div class="dozi-meter-pair">
+                <div class="dozi-meter-row"><span>L</span><div class="dozi-meter-track"><div class="dozi-meter-fill"></div></div><span class="dozi-meter-number">-2.1</span></div>
+                <div class="dozi-meter-row"><span>R</span><div class="dozi-meter-track"><div class="dozi-meter-fill is-right"></div></div><span class="dozi-meter-number">-2.4</span></div>
+              </div>
+              <div class="dozi-meter-pair">
+                <div class="dozi-meter-row"><span>L</span><div class="dozi-meter-track"><div class="dozi-meter-fill" style="width:66%"></div></div><span class="dozi-meter-number">-9.4</span></div>
+                <div class="dozi-meter-row"><span>R</span><div class="dozi-meter-track"><div class="dozi-meter-fill is-right" style="width:63%"></div></div><span class="dozi-meter-number">-9.8</span></div>
+              </div>
+              <div class="dozi-loudness-readout">
+                <div class="dozi-loudness-cell"><span>Integrated</span><strong>-11.0</strong></div>
+                <div class="dozi-loudness-cell"><span>GR max</span><strong>1.7 dB</strong></div>
+              </div>
+            </div>
+          </article>
+          <div class="dozi-console-actions">
+            <article class="dozi-section dozi-assistant-peek">
+              <div class="dozi-assistant-orb"></div><div class="dozi-assistant-copy"><strong>Talk to Dozi</strong><span>“The bass is better. Take just a little more out.”</span></div><button class="dozi-button is-primary" type="button" id="open-dozi-assistant" style="margin-left:auto">Open assistant</button>
+            </article>
+            <div class="dozi-monitor-switches"><button class="dozi-chip is-on" type="button">Mastered</button><button class="dozi-chip is-on" type="button">Loudness match</button><button class="dozi-chip" type="button">Mono</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dozi-view" data-view="wave">
+        <div class="dozi-wave-header"><div class="dozi-view-heading"><strong>Wave</strong><span>Navigate, compare, and focus the audition</span></div><div class="dozi-monitor-switches"><button class="dozi-chip is-on" type="button">Stereo waveform</button><button class="dozi-chip" type="button">Loudness trace</button><button class="dozi-chip" type="button">Fit song</button></div></div>
+        <article class="dozi-wave-panel">
+          <div class="dozi-time-ruler"><span>0:00</span><span>0:30</span><span>1:00</span><span>1:30</span><span>2:00</span><span>2:30</span><span>3:00</span><span>3:42</span></div>
+          <div class="dozi-wave-canvas">
+            <svg viewBox="0 0 1200 330" preserveAspectRatio="none" role="img" aria-label="Stereo waveform with selected chorus loop and playhead">
+              <rect x="0" y="0" width="1200" height="330" fill="light-dark(#f7fafb,#0d151b)"/>
+              <line x1="0" y1="165" x2="1200" y2="165" stroke="light-dark(#d4dcdf,#25323b)"/>
+              <path d="M0 92 L20 86 L40 104 L60 74 L80 110 L100 55 L120 93 L140 38 L160 108 L180 67 L200 88 L220 42 L240 99 L260 73 L280 49 L300 112 L320 62 L340 92 L360 37 L380 83 L400 55 L420 107 L440 46 L460 95 L480 30 L500 86 L520 52 L540 102 L560 35 L580 91 L600 45 L620 104 L640 33 L660 89 L680 50 L700 111 L720 40 L740 93 L760 56 L780 109 L800 35 L820 82 L840 48 L860 103 L880 43 L900 90 L920 60 L940 109 L960 54 L980 87 L1000 66 L1020 105 L1040 62 L1060 86 L1080 72 L1100 99 L1120 74 L1140 92 L1160 79 L1180 88 L1200 84" fill="none" stroke="#35d3b5" stroke-width="2"/>
+              <path d="M0 238 L20 244 L40 226 L60 256 L80 220 L100 275 L120 237 L140 292 L160 222 L180 263 L200 242 L220 288 L240 231 L260 257 L280 281 L300 218 L320 268 L340 238 L360 293 L380 247 L400 275 L420 223 L440 284 L460 235 L480 300 L500 244 L520 278 L540 228 L560 295 L580 239 L600 285 L620 226 L640 297 L660 241 L680 280 L700 219 L720 290 L740 237 L760 274 L780 221 L800 295 L820 248 L840 282 L860 227 L880 287 L900 240 L920 270 L940 221 L960 276 L980 243 L1000 264 L1020 225 L1040 268 L1060 244 L1080 258 L1100 231 L1120 256 L1140 238 L1160 251 L1180 242 L1200 246" fill="none" stroke="#4aa6d1" stroke-width="2"/>
+              <text x="14" y="22" fill="light-dark(#6f7d84,#82949e)" font-size="11">LEFT</text><text x="14" y="187" fill="light-dark(#6f7d84,#82949e)" font-size="11">RIGHT</text>
+            </svg>
+            <div class="dozi-selection" aria-label="Loop selection from 1 minute 18 seconds to 2 minutes 10 seconds"></div><div class="dozi-playhead"></div>
+          </div>
+          <div class="dozi-wave-lanes"><div class="dozi-wave-lane"><span>Selected region</span><strong>1:18.2 – 2:10.8</strong></div><div class="dozi-wave-lane"><span>Revision marker</span><strong>Low -0.50 dB @ 80 Hz</strong></div><div class="dozi-wave-lane"><span>Section</span><strong>Chorus 1 · Loop enabled</strong></div></div>
+        </article>
+      </section>
+
+      <section class="dozi-view" data-view="chain">
+        <div class="dozi-chain-header"><div class="dozi-view-heading"><strong>Chain</strong><span>What is processing the song—and why</span></div><button class="dozi-button" type="button"><i data-lucide="rotate-ccw" aria-hidden="true"></i> Reset style</button></div>
+        <div class="dozi-chain-flow" role="list" aria-label="Mastering signal chain">
+          <article class="dozi-module" role="listitem"><span class="dozi-module-index">01</span><strong>Corrective EQ</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>3 cuts · active</small></article>
+          <article class="dozi-module is-bypassed" role="listitem"><span class="dozi-module-index">02</span><strong>Dynamic EQ</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>Bypassed</small></article>
+          <article class="dozi-module" role="listitem"><span class="dozi-module-index">03</span><strong>De-Esser</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>0.4 dB GR</small></article>
+          <article class="dozi-module is-bypassed" role="listitem"><span class="dozi-module-index">04</span><strong>Glue</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>Bypassed</small></article>
+          <article class="dozi-module is-bypassed" role="listitem"><span class="dozi-module-index">05</span><strong>Multiband</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>Bypassed</small></article>
+          <article class="dozi-module is-bypassed" role="listitem"><span class="dozi-module-index">06</span><strong>Saturation</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>Bypassed</small></article>
+          <article class="dozi-module" role="listitem"><span class="dozi-module-index">07</span><strong>Width / Mono Bass</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>98% · 100 Hz</small></article>
+          <article class="dozi-module is-selected" role="listitem"><span class="dozi-module-index">08</span><strong>True-Peak Limiter</strong><div class="dozi-module-activity"><i></i><i></i><i></i><i></i></div><small>1.7 dB max GR</small></article>
+        </div>
+        <div class="dozi-chain-inspector">
+          <article class="dozi-section"><div class="dozi-section-title"><span>Limiter activity</span><span>Safe</span></div><div class="dozi-gr-ring"><div><strong>1.7</strong><span>dB MAX GR</span></div></div></article>
+          <article class="dozi-section"><div class="dozi-section-title"><span>True-Peak Limiter</span><span>Analysis-guided</span></div><div class="dozi-parameter-grid"><div class="dozi-parameter"><label><span>Input gain</span><span>-5.2 dB</span></label><input type="range" min="-24" max="12" value="-5" aria-label="Limiter input gain"></div><div class="dozi-parameter"><label><span>Ceiling</span><span>-2.0 dBTP</span></label><input type="range" min="-6" max="0" value="-2" aria-label="Limiter ceiling"></div><div class="dozi-parameter"><label><span>Release</span><span>100 ms</span></label><input type="range" min="20" max="500" value="100" aria-label="Limiter release"></div></div><div class="dozi-compliance"><i data-lucide="sparkles" aria-hidden="true"></i><span>Spotify Loud selected. Suno safety logic preserved the target and prevented additional loudness gain.</span></div></article>
+        </div>
+      </section>
+
+      <section class="dozi-view" data-view="deliver">
+        <div class="dozi-deliver-header"><div class="dozi-view-heading"><strong>Deliver</strong><span>Verify the master, then create the files</span></div><span class="dozi-state">Ready to export</span></div>
+        <div class="dozi-deliver-grid">
+          <article class="dozi-section">
+            <div class="dozi-section-title"><span>Master validation</span><span>Before → After</span></div>
+            <div class="dozi-validation-grid">
+              <div class="dozi-validation-item"><span>Integrated loudness</span><strong>-11.0 LUFS</strong><small>Target met</small></div>
+              <div class="dozi-validation-item"><span>True peak</span><strong>-2.02 dBTP</strong><small>Ceiling met</small></div>
+              <div class="dozi-validation-item"><span>RMS</span><strong>-9.6 dBFS</strong><small>Stable</small></div>
+              <div class="dozi-validation-item"><span>Crest factor</span><strong>7.5 dB</strong><small>Preserved</small></div>
+              <div class="dozi-validation-item"><span>Phase correlation</span><strong>+0.82</strong><small>Mono safe</small></div>
+              <div class="dozi-validation-item"><span>Clipped samples</span><strong>0</strong><small>Verified</small></div>
+            </div>
+            <div class="dozi-compliance"><i data-lucide="circle-check" aria-hidden="true"></i><span><strong>Verified master.</strong> Loudness, true peak, stereo safety, and file integrity checks passed.</span></div>
+          </article>
+          <article class="dozi-section">
+            <div class="dozi-section-title"><span>Export master</span><span>Version 3</span></div>
+            <div class="dozi-export-form">
+              <div class="dozi-field"><label for="mock-format">Format</label><select id="mock-format"><option>WAV · 32-bit float</option><option>MP3 · Constant bitrate</option></select></div>
+              <div class="dozi-field"><label for="mock-name">Filename</label><input id="mock-name" value="Midnight-on-Auburn-Ave-DoziMaster-v3.wav"></div>
+              <div class="dozi-field"><label for="mock-destination">Destination</label><select id="mock-destination"><option>Create new file</option><option>Replace current WAV export</option></select></div>
+              <div class="dozi-field"><label for="mock-reports">Reports</label><select id="mock-reports"><option>TXT + JSON verification reports</option><option>No reports</option></select></div>
+              <button class="dozi-button is-warm" type="button" style="height:42px;margin-top:4px"><i data-lucide="download" aria-hidden="true"></i> Export verified master</button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="dozi-transport">
+      <div class="dozi-transport-buttons"><button class="dozi-icon-button" type="button" aria-label="Return to beginning"><i data-lucide="skip-back" aria-hidden="true"></i></button><button class="dozi-play-button" type="button" id="mock-play" aria-label="Play"><i data-lucide="play" aria-hidden="true"></i></button><button class="dozi-icon-button" type="button" aria-label="Loop selection"><i data-lucide="repeat-2" aria-hidden="true"></i></button></div>
+      <div class="dozi-overview"><div class="dozi-overview-line"></div><div class="dozi-time"><span>1:49</span><span>3:42</span></div></div>
+      <div class="dozi-monitor"><button class="dozi-chip is-on" type="button">A/B · Mastered</button><button class="dozi-chip is-on" type="button">Match</button><div class="dozi-volume"><label><span>Monitor</span><span>0.0 dB</span></label><input type="range" min="-60" max="6" value="0" aria-label="Monitor volume"></div><button class="dozi-icon-button" type="button" aria-label="Audio device"><i data-lucide="speaker" aria-hidden="true"></i></button></div>
+    </footer>
+
+    <aside class="dozi-assistant-panel" id="dozi-assistant-panel" aria-label="Talk to Dozi assistant">
+      <div class="dozi-assistant-head"><strong>Talk to Dozi</strong><button class="dozi-icon-button" type="button" id="close-dozi-assistant" aria-label="Close assistant"><i data-lucide="x" aria-hidden="true"></i></button></div>
+      <div class="dozi-assistant-history">
+        <div class="dozi-message is-user">The master sounds great, but there is a little too much low end in the bass.</div>
+        <div class="dozi-message is-dozi">I made a broad, gentle reduction centered at 80 Hz and kept the rest of the Suno remaster unchanged.<div class="dozi-change-summary"><span>Low · 80 Hz · Q 0.7</span><strong>-0.50 dB</strong></div></div>
+        <div class="dozi-message is-user">That is better. A little more.</div>
+        <div class="dozi-message is-dozi">The low adjustment is now -0.75 dB. I preserved your playhead and loop so you can compare the same passage.<div class="dozi-change-summary"><span>Revision 2 · Undo available</span><strong>-0.75 dB</strong></div></div>
+      </div>
+      <div class="dozi-assistant-entry"><input aria-label="Tell Dozi what you hear" value="The bass feels right now."><button class="dozi-button is-primary" type="button">Send</button></div>
+    </aside>
+  </section>
+
+  <script>
+    (() => {
+      const root = document.getElementById('dozi-mastering-concept');
+      const tabs = [...root.querySelectorAll('[data-open-view]')];
+      const views = [...root.querySelectorAll('[data-view]')];
+      const navTabs = [...root.querySelectorAll('.dozi-tab')];
+      function openView(name) {
+        views.forEach(view => view.classList.toggle('is-active', view.dataset.view === name));
+        navTabs.forEach(tab => tab.classList.toggle('is-active', tab.dataset.openView === name));
+        if (name !== 'console') root.querySelector('#dozi-assistant-panel').classList.remove('is-open');
+      }
+      tabs.forEach(button => button.addEventListener('click', () => openView(button.dataset.openView)));
+      root.querySelector('#open-dozi-assistant').addEventListener('click', () => root.querySelector('#dozi-assistant-panel').classList.add('is-open'));
+      root.querySelector('#close-dozi-assistant').addEventListener('click', () => root.querySelector('#dozi-assistant-panel').classList.remove('is-open'));
+      const play = root.querySelector('#mock-play');
+      play.addEventListener('click', () => {
+        const playing = play.getAttribute('aria-label') === 'Pause';
+        play.setAttribute('aria-label', playing ? 'Play' : 'Pause');
+        play.innerHTML = `<i data-lucide="${playing ? 'play' : 'pause'}" aria-hidden="true"></i>`;
+        if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+      });
+    })();
+  </script>
+</div>

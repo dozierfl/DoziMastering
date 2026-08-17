@@ -1,0 +1,6 @@
+#include "dozi/core/MasteringReport.h"
+#include <iomanip>
+#include <sstream>
+namespace dozi::core { namespace { std::string esc(std::string s){ for(std::size_t p=0;(p=s.find('"',p))!=std::string::npos;p+=2)s.replace(p,1,"\\\""); return s; } }
+std::string MasteringReport::text(const MasteringAnalysisResult& a,const MasteringPlan& p,const MasteringHealthScore& h){std::ostringstream s;s<<std::fixed<<std::setprecision(2)<<"Integrated: "<<a.integratedLufs<<" LUFS\nTrue peak: "<<a.truePeakDbtp<<" dBTP\nTarget: "<<p.targetIntegratedLufs<<" LUFS\nOverall health: "<<h.overall<<"/100\n";for(const auto& c:h.categories)s<<c.name<<": "<<c.score<<"/100\n";return s.str();}
+std::string MasteringReport::json(const MasteringAnalysisResult& a,const MasteringPlan& p,const MasteringHealthScore& h){std::ostringstream s;s<<std::fixed<<std::setprecision(6)<<"{\"schema\":1,\"source\":\""<<esc(a.path.string())<<"\",\"integratedLufs\":"<<a.integratedLufs<<",\"truePeakDbtp\":"<<a.truePeakDbtp<<",\"targetLufs\":"<<p.targetIntegratedLufs<<",\"health\":{\"overall\":"<<h.overall<<",\"categories\":[";for(std::size_t i=0;i<h.categories.size();++i){if(i)s<<',';s<<"{\"name\":\""<<esc(h.categories[i].name)<<"\",\"score\":"<<h.categories[i].score<<'}';}s<<"]}}";return s.str();}}
