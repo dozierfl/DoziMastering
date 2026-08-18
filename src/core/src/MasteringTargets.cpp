@@ -14,7 +14,9 @@ const std::vector<MasteringTargetPreset>& verifiedMasteringTargets() {
             "Spotify states -11 LUFS Loud and recommends true peak below -2 dBTP for masters louder than -14 LUFS."},
         {"spotify-quiet", "Spotify Quiet", -19.0, -1.0,
             "https://support.spotify.com/us/artists/article/loudness-normalization/",
-            "Spotify states -19 LUFS Quiet; Dozi retains Spotify's published -1 dBTP mastering ceiling."}
+            "Spotify states -19 LUFS Quiet; Dozi retains Spotify's published -1 dBTP mastering ceiling."},
+        {"high-impact-8", "High Impact -8 LUFS", -8.0, -1.0, "",
+            "Dozi creative high-loudness target for dense modern masters. Streaming services may turn playback down; preserve the -1 dBTP ceiling and verify distortion, punch, and codec behavior."}
     };
     return targets;
 }

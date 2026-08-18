@@ -29,6 +29,7 @@ int main(){
     expect(aiRemaster!=nullptr,"AI WAV Remaster preset is available");
     if(aiRemaster)dozi::core::applyMasteringStyle(plan,analysis,*aiRemaster);
     expect(plan.styleId=="suno-wav-remaster","AI remaster preset is applied to the plan");
+    expect(plan.targetId=="streaming-normal"&&plan.targetIntegratedLufs==-14.0,"processing styles do not replace the selected delivery target");
     expect(plan.modules.size()==8,"analysis creates the complete eight-processor live mastering chain");
     expect(plan.truePeakCeilingDbtp<=-1.0,"AI remaster preset retains a safe true-peak ceiling");
     const auto compressor=std::ranges::find(plan.modules,dozi::core::MasteringModuleType::broadbandCompressor,&dozi::core::MasteringModulePlan::type);
@@ -38,6 +39,7 @@ int main(){
     const auto&styles=dozi::core::factoryMasteringStyles();
     expect(styles.size()==12,"all factory mastering styles are available");
     expect(dozi::core::masteringTarget("spotify-loud").has_value(),"Spotify Loud delivery target is available");
+    const auto highImpact=dozi::core::masteringTarget("high-impact-8");expect(highImpact&&highImpact->integratedLufs==-8.0&&highImpact->truePeakCeilingDbtp==-1.0,"High Impact delivery preset targets -8 LUFS with a safe true-peak ceiling");
 
     dozi::core::MasteringAnalysisResult diagnosticSource,diagnosticReference;
     diagnosticSource.crestFactorDb=11.0;diagnosticSource.phaseCorrelation=0.8;
