@@ -57,6 +57,29 @@ MasteringPlan MasteringDecisionEngine::createPlan(
     equalizer.bypassed = equalizer.parameters.empty();
     plan.modules.push_back(std::move(equalizer));
 
+    MasteringModulePlan dynamicEqualizer {MasteringModuleType::dynamicEq, true, {}, {}};
+    int dynamicBand = 0;
+    for (const auto& peak : analysis.resonances) {
+        if (peak.excessDb < config.resonanceThresholdDb) continue;
+        const auto prefix = "band" + std::to_string(++dynamicBand) + ".";
+        dynamicEqualizer.parameters[prefix + "frequencyHz"] = peak.frequencyHz;
+        dynamicEqualizer.parameters[prefix + "gainDb"] = -std::min(2.0, peak.excessDb * 0.25);
+        dynamicEqualizer.parameters[prefix + "q"] = config.correctiveQ;
+        dynamicEqualizer.parameters[prefix + "thresholdDbfs"] = std::clamp(analysis.rmsDbfs - 6.0, -42.0, -18.0);
+        dynamicEqualizer.parameters[prefix + "attackMs"] = 10.0;
+        dynamicEqualizer.parameters[prefix + "releaseMs"] = 120.0;
+        dynamicEqualizer.parameters[prefix + "enabled"] = 1.0;
+        dynamicEqualizer.parameters[prefix + "listen"] = 0.0;
+    }
+    plan.modules.push_back(std::move(dynamicEqualizer));
+
+    MasteringModulePlan deEsser {MasteringModuleType::deEsser, true,
+        {{"frequencyHz", 6500.0}, {"q", 1.0},
+            {"thresholdDbfs", std::clamp(analysis.rmsDbfs - 8.0, -42.0, -20.0)},
+            {"ratio", 3.0}, {"maximumReductionDb", 3.0}, {"attackMs", 2.0},
+            {"releaseMs", 80.0}, {"listen", 0.0}}, {}};
+    plan.modules.push_back(std::move(deEsser));
+
     MasteringModulePlan compressor {MasteringModuleType::broadbandCompressor, true, {}, {}};
     if (analysis.crestFactorDb >= config.compressionCrestThresholdDb) {
         compressor.bypassed = false;
@@ -69,6 +92,20 @@ MasteringPlan MasteringDecisionEngine::createPlan(
             "Enable low-ratio broadband compression with zero automatic makeup gain"));
     }
     plan.modules.push_back(std::move(compressor));
+
+    MasteringModulePlan multiband {MasteringModuleType::multibandCompressor, true,
+        {{"lowCrossoverHz", 120.0}, {"midCrossoverHz", 700.0}, {"highCrossoverHz", 4000.0},
+            {"ratio", 1.4}, {"maximumGainReductionDb", 1.5}, {"low.thresholdDbfs", -18.0},
+            {"lowMid.thresholdDbfs", -18.0}, {"highMid.thresholdDbfs", -19.0},
+            {"high.thresholdDbfs", -20.0}, {"low.solo", 0.0}, {"lowMid.solo", 0.0},
+            {"highMid.solo", 0.0}, {"high.solo", 0.0}}, {}};
+    plan.modules.push_back(std::move(multiband));
+
+    MasteringModulePlan saturation {MasteringModuleType::saturation, true,
+        {{"character", 1.0}, {"driveDb", 0.0}, {"mix", 0.0}, {"outputTrimDb", 0.0},
+            {"oversamplingFactor", 4.0}, {"automaticLevelCompensation", 1.0},
+            {"maximumCompensationDb", 3.0}, {"outputCeilingDbfs", -0.1}}, {}};
+    plan.modules.push_back(std::move(saturation));
 
     MasteringModulePlan stereo {MasteringModuleType::stereoWidthMonoBass, false,
         {{"widthFactor", 1.0}, {"monoBassCrossoverHz", config.monoBassCrossoverHz},
