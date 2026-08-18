@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(DoziMastering VERSION 0.1.0 LANGUAGES C CXX OBJCXX)
+project(DoziMastering VERSION 0.14.0 LANGUAGES C CXX OBJCXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

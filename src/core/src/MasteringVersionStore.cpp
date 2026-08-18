@@ -30,11 +30,13 @@ MasteringVersionOutcome MasteringVersionStore::restore(const std::filesystem::pa
 
 std::string MasteringVersionStore::serialize(const MasteringPlan& plan) const {
     std::ostringstream out;
-    out<<"DOZI_MASTERING_VERSION 2\n"<<plan.schemaVersion<<' '<<quoted(plan.targetId)<<' '<<quoted(plan.styleId)<<' '
+    out<<"DOZI_MASTERING_VERSION 3\n"<<plan.schemaVersion<<' '<<quoted(plan.targetId)<<' '<<quoted(plan.styleId)<<' '
        <<std::setprecision(17)<<plan.targetIntegratedLufs<<' '<<plan.truePeakCeilingDbtp<<' '<<plan.modules.size()<<'\n';
     for(const auto& module:plan.modules){
-        out<<static_cast<int>(module.type)<<' '<<module.bypassed<<' '<<module.parameters.size()<<' '<<module.reasons.size()<<'\n';
+        out<<static_cast<int>(module.type)<<' '<<module.bypassed<<' '<<module.parameters.size()<<' '<<module.reasons.size()<<' '<<module.recommendedParameters.size()<<' '<<module.styleParameters.size()<<'\n';
         for(const auto&[key,value]:module.parameters)out<<quoted(key)<<' '<<std::setprecision(17)<<value<<'\n';
+        for(const auto&[key,value]:module.recommendedParameters)out<<quoted(key)<<' '<<std::setprecision(17)<<value<<'\n';
+        for(const auto&[key,value]:module.styleParameters)out<<quoted(key)<<' '<<std::setprecision(17)<<value<<'\n';
         for(const auto& reason:module.reasons)out<<quoted(reason.measurement)<<' '<<std::setprecision(17)<<reason.measuredValue<<' '
             <<quoted(reason.unit)<<' '<<quoted(reason.ruleId)<<' '<<quoted(reason.ruleExpression)<<' '<<quoted(reason.action)<<'\n';
     }
@@ -43,16 +45,20 @@ std::string MasteringVersionStore::serialize(const MasteringPlan& plan) const {
 
 MasteringVersionOutcome MasteringVersionStore::deserialize(const std::string& data) const {
     std::istringstream in(data);std::string magic;int format=0;
-    if(!(in>>magic>>format)||magic!="DOZI_MASTERING_VERSION"||(format!=1&&format!=2))return {{},"Unsupported mastering version format."};
+    if(!(in>>magic>>format)||magic!="DOZI_MASTERING_VERSION"||(format<1||format>3))return {{},"Unsupported mastering version format."};
     MasteringPlan plan;std::size_t moduleCount=0;
     in>>plan.schemaVersion>>std::quoted(plan.targetId);if(format>=2)in>>std::quoted(plan.styleId);else plan.styleId="balanced-streaming";in>>plan.targetIntegratedLufs>>plan.truePeakCeilingDbtp>>moduleCount;
     if(!in||plan.schemaVersion!=2)return {{},"Invalid or unsupported mastering plan schema."};
     for(std::size_t index=0;index<moduleCount;++index){
-        int type=0,bypassed=0;std::size_t parameterCount=0,reasonCount=0;
+        int type=0,bypassed=0;std::size_t parameterCount=0,reasonCount=0,recommendedCount=0,styleCount=0;
         if(!(in>>type>>bypassed>>parameterCount>>reasonCount)||type<0||type>static_cast<int>(MasteringModuleType::truePeakLimiter))
             return {{},"Invalid mastering module record."};
+        if(format>=3&&!(in>>recommendedCount>>styleCount))return {{},"Invalid mastering snapshot record."};
         MasteringModulePlan module{static_cast<MasteringModuleType>(type),bypassed!=0,{},{}};
         for(std::size_t p=0;p<parameterCount;++p){std::string key;double value=0;if(!(in>>std::quoted(key)>>value))return {{},"Invalid mastering parameter record."};module.parameters[key]=value;}
+        for(std::size_t p=0;p<recommendedCount;++p){std::string key;double value=0;if(!(in>>std::quoted(key)>>value))return {{},"Invalid mastering recommendation record."};module.recommendedParameters[key]=value;}
+        for(std::size_t p=0;p<styleCount;++p){std::string key;double value=0;if(!(in>>std::quoted(key)>>value))return {{},"Invalid mastering style record."};module.styleParameters[key]=value;}
+        if(module.recommendedParameters.empty())module.recommendedParameters=module.parameters;if(module.styleParameters.empty())module.styleParameters=module.parameters;
         for(std::size_t r=0;r<reasonCount;++r){MasteringDecisionTrace reason;if(!(in>>std::quoted(reason.measurement)>>reason.measuredValue>>std::quoted(reason.unit)>>std::quoted(reason.ruleId)>>std::quoted(reason.ruleExpression)>>std::quoted(reason.action)))return {{},"Invalid mastering decision trace."};module.reasons.push_back(std::move(reason));}
         plan.modules.push_back(std::move(module));
     }

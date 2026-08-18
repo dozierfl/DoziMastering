@@ -77,6 +77,11 @@ ReferenceMatchPlan MasteringReferenceMatcher::createPlan(
         equalizer.parameters[prefix + "frequencyHz"] = geometricCentre(band.lowerHz, band.upperHz);
         equalizer.parameters[prefix + "gainDb"] = adjustment;
         equalizer.parameters[prefix + "q"] = config.equalizerQ;
+        equalizer.parameters[prefix + "thresholdDbfs"] = -26.0;
+        equalizer.parameters[prefix + "attackMs"] = 10.0;
+        equalizer.parameters[prefix + "releaseMs"] = 120.0;
+        equalizer.parameters[prefix + "enabled"] = 1.0;
+        equalizer.parameters[prefix + "listen"] = 0.0;
         equalizer.reasons.push_back({"relative band energy difference", band.differenceDb, "dB",
             "reference-tonal-difference", "abs(source-relative-reference-relative) >= threshold",
             "Propose bounded dynamic EQ adjustment for " + band.name});
@@ -94,6 +99,7 @@ ReferenceMatchPlan MasteringReferenceMatcher::createPlan(
             "Propose bounded multiband dynamics control"});
     }
     result.proposedModules.push_back(std::move(compressor));
+    for(auto&module:result.proposedModules){module.recommendedParameters=module.parameters;module.styleParameters=module.parameters;}
     return result;
 }
 
@@ -130,11 +136,11 @@ MasteringPlan MasteringReferenceMatcher::createPhase2Plan(
     modules.push_back(*module(base.modules,MasteringModuleType::linearPhaseEq));
     const auto* dynamic=match?module(match->proposedModules,MasteringModuleType::dynamicEq):nullptr;
     modules.push_back(dynamic?*dynamic:MasteringModulePlan{MasteringModuleType::dynamicEq,true,{},{}});
-    modules.push_back({MasteringModuleType::deEsser,true,{{"frequencyHz",6500},{"q",1},{"thresholdDbfs",-30},{"ratio",3},{"maximumReductionDb",6},{"attackMs",2},{"releaseMs",80}}, {}});
+    modules.push_back({MasteringModuleType::deEsser,true,{{"frequencyHz",6500},{"q",1},{"thresholdDbfs",-30},{"ratio",3},{"maximumReductionDb",6},{"attackMs",2},{"releaseMs",80},{"listen",0}}, {}});
     modules.push_back(*module(base.modules,MasteringModuleType::broadbandCompressor));
     const auto* multiband=match?module(match->proposedModules,MasteringModuleType::multibandCompressor):nullptr;
-    modules.push_back(multiband?*multiband:MasteringModulePlan{MasteringModuleType::multibandCompressor,true,{{"lowCrossoverHz",160},{"highCrossoverHz",4000},{"ratio",1.5},{"maximumGainReductionDb",2}}, {}});
-    modules.push_back({MasteringModuleType::saturation,true,{{"mode",0},{"driveDb",2},{"mix",0.5},{"outputTrimDb",0},{"automaticLevelCompensation",1},{"maximumCompensationDb",3},{"outputCeilingDbfs",-0.1}}, {}});
+    modules.push_back(multiband?*multiband:MasteringModulePlan{MasteringModuleType::multibandCompressor,true,{{"lowCrossoverHz",120},{"midCrossoverHz",700},{"highCrossoverHz",4000},{"ratio",1.5},{"maximumGainReductionDb",2},{"low.thresholdDbfs",-18},{"lowMid.thresholdDbfs",-18},{"highMid.thresholdDbfs",-19},{"high.thresholdDbfs",-20},{"low.solo",0},{"lowMid.solo",0},{"highMid.solo",0},{"high.solo",0}}, {}});
+    modules.push_back({MasteringModuleType::saturation,true,{{"character",1},{"driveDb",2},{"mix",0.5},{"outputTrimDb",0},{"oversamplingFactor",4},{"automaticLevelCompensation",1},{"maximumCompensationDb",3},{"outputCeilingDbfs",-0.1}}, {}});
     modules.push_back(*module(base.modules,MasteringModuleType::stereoWidthMonoBass));
     modules.push_back(*module(base.modules,MasteringModuleType::truePeakLimiter));
     base.modules=std::move(modules);return base;

@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 
 namespace dozi::core {
 
@@ -29,10 +30,16 @@ struct MasteringDecisionTrace {
 };
 
 struct MasteringModulePlan {
+    MasteringModulePlan() = default;
+    MasteringModulePlan(MasteringModuleType moduleType,bool isBypassed,
+        std::map<std::string,double> values,std::vector<MasteringDecisionTrace> decisionReasons)
+        : type(moduleType),bypassed(isBypassed),parameters(std::move(values)),reasons(std::move(decisionReasons)) {}
     MasteringModuleType type;
     bool bypassed = false;
     std::map<std::string, double> parameters;
     std::vector<MasteringDecisionTrace> reasons;
+    std::map<std::string, double> recommendedParameters;
+    std::map<std::string, double> styleParameters;
 };
 
 struct MasteringPlan {

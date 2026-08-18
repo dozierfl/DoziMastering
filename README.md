@@ -7,7 +7,7 @@ Dozi Mastering is a standalone Apple Silicon macOS mastering application with an
 - Stereo WAV, AIFF, FLAC, and MP3 intake
 - LUFS, RMS, peak, true-peak, crest-factor, stereo, and spectral analysis
 - Deterministic mastering plans and reference matching
-- Twelve factory styles, including Suno WAV Remaster
+- Twelve factory styles, including AI WAV Remaster
 - Spotify delivery targets and custom LUFS/ceiling controls
 - Original/mastered A/B with loudness matching
 - Looping, stereo waveform navigation, monitor level, mute, and device selection

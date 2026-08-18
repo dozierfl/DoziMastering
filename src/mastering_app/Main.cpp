@@ -18,6 +18,7 @@ public:
             setContentOwned(content,true);
             setWantsKeyboardFocus(true);
             setResizable(true,true);
+            setResizeLimits(1100,760,2200,1500);
             centreWithSize(1280,960);
             setVisible(true);
             content->grabKeyboardFocus();

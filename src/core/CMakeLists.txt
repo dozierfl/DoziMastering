@@ -8,6 +8,7 @@ find_library(LAME_LIBRARY mp3lame HINTS /opt/homebrew/opt/lame/lib /usr/local/li
 add_library(dozi_mastering_core STATIC
     src/MasteringAnalyzer.cpp
     src/MasteringDecisionEngine.cpp
+    src/MasteringDiagnostics.cpp
     src/MasteringDsp.cpp
     src/MasteringHealth.cpp
     src/MasteringMp3Encoder.cpp

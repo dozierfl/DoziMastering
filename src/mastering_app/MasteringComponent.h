@@ -26,6 +26,13 @@ public:
     juce::Font getPopupMenuFont() override { return juce::Font(juce::FontOptions(12.0f)); }
 };
 
+class DoziLookAndFeel final : public juce::LookAndFeel_V4 {
+public:
+    DoziLookAndFeel();
+    void drawButtonBackground(juce::Graphics&, juce::Button&, const juce::Colour&, bool, bool) override;
+    void drawButtonText(juce::Graphics&, juce::TextButton&, bool, bool) override;
+};
+
 class MasteringComponent final : public juce::AudioAppComponent, public juce::FileDragAndDropTarget, private juce::Timer, private juce::KeyListener {
 public:
     MasteringComponent(); ~MasteringComponent() override;
@@ -44,6 +51,8 @@ private:
     [[nodiscard]] juce::File sessionSupportDirectory() const;
     void refreshText(); void setBusy(bool); void loadTransport(const juce::File&,bool); void switchAB(); void updatePlaybackGain(); void updateMonitorGain(); void togglePlayback(); void showAudioDeviceSettings();
     void seekBoth(double seconds); void nudgePlayback(double seconds); void updateLoopControls(double startSeconds,double endSeconds); void updateTransportTime(double seconds);
+    enum class View { console, wave, chain, deliver };
+    void showView(View);
     void installTransportKeyListeners(juce::Component& parent);
     bool keyPressed(const juce::KeyPress&, juce::Component*) override;
     [[nodiscard]] dozi::core::MasteringPlan planFromControls() const;
@@ -51,8 +60,10 @@ private:
     juce::TextButton chooseButton{"Choose Mix"},referenceButton{"Choose Reference"},clearReferenceButton{"Clear Reference"},analyseButton{"Analyze + Plan"},previewButton{"Render Verified Master"},exportButton{"Export Master"},playButton{"Play"},deviceButton{"Audio Device"},cancelButton{"Cancel"};
     juce::TextButton saveVersionButton{"Save Version"},restoreVersionButton{"Restore Version"},compareVersionButton{"Compare Version"};
     juce::TextButton saveProjectButton{"Save Project"},openProjectButton{"Open Project"},recentProjectsButton{"Recent Sessions"};
+    juce::TextButton consoleViewButton{"CONSOLE"},waveViewButton{"WAVE"},chainViewButton{"CHAIN"},deliverViewButton{"DELIVER"};
     juce::ToggleButton abButton{"Playback: Mastered"},loudnessMatchButton{"Loudness Match"},loopTrackButton{"Loop Track"},loopSelectionButton{"Loop Selection"},monitorMuteButton{"Mute"},eq{"Corrective EQ"},dynamicEq{"Dynamic EQ"},deEsser{"De-Esser"},comp{"Glue Compressor"},multiband{"Multiband"},saturation{"Saturation"},stereo{"Width / Mono Bass"},limiter{"True Peak Limiter"};
     CompactComboLookAndFeel compactComboLookAndFeel;
+    DoziLookAndFeel doziLookAndFeel;
     juce::ComboBox stylePreset,targetPreset; juce::Slider seek,target,ceiling,width,saturationDrive,saturationMix,monitorLevel; juce::Label title,status,referenceStatus,workflowLabel,formatBadge,transportTime; juce::TextEditor results,beforeSummary,afterSummary; juce::ProgressBar progress;
     juce::TextButton detailsButton {"Show Technical Details"};
     juce::TextButton doziApplyButton {"Apply Request"},doziUndoButton {"Undo Dozi"};
@@ -72,8 +83,7 @@ private:
     PlaybackMeter playbackMeter;
     bool previewIsTemporary = false;
     bool playbackWasRunning = false;
-    bool presetAuditionPending = false;
-    juce::int64 presetAuditionRequestedMs = 0;
+    View currentView = View::console;
     double limiterMaximumGainReductionDb = 0.0, limiterSafetyTrimDb = 0.0;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MasteringComponent)
 };

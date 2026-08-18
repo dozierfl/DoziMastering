@@ -62,7 +62,8 @@ MasteringPlan MasteringDecisionEngine::createPlan(
         compressor.bypassed = false;
         compressor.parameters = {{"thresholdDbfs", std::min(-6.0, analysis.rmsDbfs + 6.0)},
             {"ratio", config.compressorRatio}, {"attackMs", config.compressorAttackMs},
-            {"releaseMs", config.compressorReleaseMs}, {"makeupGainDb", 0.0}};
+            {"releaseMs", config.compressorReleaseMs}, {"makeupGainDb", 0.0},
+            {"sidechainHpfHz", 80.0}, {"automaticRelease", 0.0}};
         compressor.reasons.push_back(trace("crest factor", analysis.crestFactorDb, "dB",
             "COMPRESS_HIGH_CREST", "crest factor >= configured compression threshold",
             "Enable low-ratio broadband compression with zero automatic makeup gain"));
@@ -70,7 +71,8 @@ MasteringPlan MasteringDecisionEngine::createPlan(
     plan.modules.push_back(std::move(compressor));
 
     MasteringModulePlan stereo {MasteringModuleType::stereoWidthMonoBass, false,
-        {{"widthFactor", 1.0}, {"monoBassCrossoverHz", config.monoBassCrossoverHz}}, {}};
+        {{"widthFactor", 1.0}, {"monoBassCrossoverHz", config.monoBassCrossoverHz},
+            {"sideTrimDb", 0.0}, {"balance", 0.0}, {"monoCheck", 0.0}, {"swapLeftRight", 0.0}}, {}};
     if (analysis.phaseCorrelation < config.unsafeCorrelationThreshold
         || analysis.monoCompatibilityLossDb < config.unsafeMonoLossThresholdDb) {
         stereo.parameters["widthFactor"] = config.safeWidthFactor;
@@ -91,13 +93,15 @@ MasteringPlan MasteringDecisionEngine::createPlan(
     const auto inputGain = std::min(loudnessGain, config.maximumLimiterInputGainDb);
     MasteringModulePlan limiter {MasteringModuleType::truePeakLimiter, false,
         {{"inputGainDb", inputGain}, {"ceilingDbtp", config.truePeakCeilingDbtp},
-            {"lookaheadMs", 5.0}, {"releaseMs", config.limiterReleaseMs}}, {}};
+            {"lookaheadMs", 5.0}, {"releaseMs", config.limiterReleaseMs},
+            {"linked", 1.0}, {"truePeakEnabled", 1.0}}, {}};
     limiter.reasons.push_back(trace("integrated loudness", analysis.integratedLufs, "LUFS",
         "TARGET_LOUDNESS_WITH_LOOKAHEAD_LIMITING", "gain = min(target-LUFS, maximum input gain)",
         "Apply " + std::to_string(inputGain) + " dB before linked look-ahead true-peak limiting"));
     limiter.reasons.push_back(trace("true peak", analysis.truePeakDbtp, "dBTP", "TRUE_PEAK_LIMIT",
         "linked look-ahead gain reduction plus verified safety trim", "Preserve the configured true-peak ceiling"));
     plan.modules.push_back(std::move(limiter));
+    for(auto&module:plan.modules){module.recommendedParameters=module.parameters;module.styleParameters=module.parameters;}
     return plan;
 }
 

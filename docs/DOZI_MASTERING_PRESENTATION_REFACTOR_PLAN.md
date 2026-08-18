@@ -392,7 +392,7 @@ Exit criterion: every supported output can be configured and verified from one v
 - Monitoring volume can never be confused with mastering gain.
 - The original source can never be overwritten by export.
 - The selected project, view, playhead, loop, and assistant history recover on relaunch where supported.
-- All current factory presets, Suno WAV Remaster behavior, project files, recent sessions, MP3 bitrates, and replace/create export behavior remain available.
+- All current factory presets, AI WAV Remaster behavior, project files, recent sessions, MP3 bitrates, and replace/create export behavior remain available.
 - The interface remains usable at the minimum supported window size and scales cleanly on Retina displays.
 
 ## Recommended first design deliverable
