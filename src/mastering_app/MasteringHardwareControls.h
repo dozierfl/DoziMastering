@@ -25,6 +25,9 @@ public:
     std::function<void()> onModuleChanged;
     void paint(juce::Graphics&) override;
     void resized() override;
+    void mouseDown(const juce::MouseEvent&) override;
+    void mouseDrag(const juce::MouseEvent&) override;
+    void mouseUp(const juce::MouseEvent&) override;
 private:
     struct BandControl {
         std::string gainKey;
@@ -39,6 +42,7 @@ private:
     void refreshSelectedBand();
     void updateBypass();
     void restoreAnalysisSettings();
+    [[nodiscard]] juce::Point<float> nodePosition(const BandControl&) const;
     HardwareKnobLookAndFeel knobLookAndFeel;
     juce::Image faceplateSkin;
     juce::TextButton inButton {"IN"};
@@ -54,6 +58,8 @@ private:
     dozi::core::MasteringModulePlan* lastModule = nullptr;
     std::map<std::string,double> analysisSettings;
     std::map<std::string,double> styleSettings;
+    std::string draggedGainKey;
+    std::string draggedFrequencyKey;
 };
 
 class SkinnedProcessorHardwarePanel final : public juce::Component {

@@ -2,6 +2,7 @@
 
 #include "dozi/core/MasteringDecisionEngine.h"
 #include "MasteringHardwareControls.h"
+#include "GlueCompressorHardwarePanel.h"
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <functional>
 #include <memory>
@@ -13,6 +14,7 @@ public:
     void setPlan(dozi::core::MasteringPlan*);
     void setTelemetry(const std::vector<dozi::core::ProcessorTelemetry>&);
     void updateTelemetry(const dozi::core::ProcessorTelemetry&);
+    void updateGlueLiveMetering(double inputDbfs,double outputDbfs,double gainReductionDb,bool active);
     std::function<void()> onPlanChanged;
     void resized() override;
 private:
@@ -26,6 +28,7 @@ private:
     juce::Component hardwareCanvas;
     CorrectiveEqHardwarePanel correctiveEqHardware;
     SkinnedProcessorHardwarePanel processorHardware;
+    GlueCompressorHardwarePanel glueHardware;
     juce::Viewport viewport;
     juce::Component parameterContent;
     std::vector<ParameterControl> controls;

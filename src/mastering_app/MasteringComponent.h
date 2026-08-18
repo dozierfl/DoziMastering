@@ -6,6 +6,7 @@
 #include "dozi/core/MasteringVersionStore.h"
 #include "MasteringModuleInspector.h"
 #include "MasteringWaveformView.h"
+#include "../glue_compressor_plugin/GlueCompressorEngine.h"
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <atomic>
 #include <thread>
@@ -75,6 +76,10 @@ private:
     juce::AudioFormatManager formats; std::unique_ptr<juce::AudioFormatReaderSource>beforeReader,afterReader; juce::AudioTransportSource beforeTransport,afterTransport;
     juce::AudioBuffer<float> beforePlaybackBuffer, afterPlaybackBuffer;
     std::atomic<float> targetMasteredBlend {0.0f}, masteredPlaybackGain {1.0f}, monitorGain {1.0f};
+    std::atomic<float> gluePlaybackInputDbfs {-100.0f}, gluePlaybackOutputDbfs {-100.0f}, gluePlaybackGainReductionDb {0.0f};
+    std::atomic<float> glueThresholdDbfs {-11.4f},glueAttackMs {80.0f},glueReleaseMs {300.0f},glueRatio {1.1f},glueMakeupGainDb {0.0f};
+    std::atomic<bool> glueEnabled {false},glueAutoMakeup {false},glueAutoRelease {false},glueSidechainHpf {false};
+    GlueCompressorEngine glueAuditionEngine;
     float currentMasteredBlend = 0.0f, currentMonitorGain = 1.0f;
     double playbackSampleRate = 48000.0;
     std::unique_ptr<juce::FileChooser>chooser; std::unique_ptr<std::thread>worker; std::shared_ptr<dozi::core::CancellationToken>token;

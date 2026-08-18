@@ -7,6 +7,7 @@ target_link_libraries(dozi_processor_control_tests PRIVATE Dozi::Core)
 target_compile_options(dozi_processor_control_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_test(NAME dozi_processor_control_tests COMMAND dozi_processor_control_tests)
 add_executable(dozi_hardware_control_tests HardwareControlTests.cpp
+    "${CMAKE_SOURCE_DIR}/src/mastering_app/GlueCompressorHardwarePanel.cpp"
     "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringHardwareControls.cpp"
     "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringModuleInspector.cpp")
 target_include_directories(dozi_hardware_control_tests PRIVATE "${CMAKE_SOURCE_DIR}/src/mastering_app")
@@ -25,3 +26,11 @@ add_test(NAME dozi_runtime_text_ascii
 add_test(NAME dozi_explicit_render_only
     COMMAND "${CMAKE_COMMAND}" -DSOURCE_ROOT=${CMAKE_SOURCE_DIR}
         -P "${CMAKE_CURRENT_SOURCE_DIR}/VerifyExplicitRenderOnly.cmake")
+if(DOZI_BUILD_GLUE_PLUGIN)
+    add_executable(dozi_glue_compressor_tests GlueCompressorTests.cpp)
+    target_include_directories(dozi_glue_compressor_tests PRIVATE "${CMAKE_SOURCE_DIR}/src/glue_compressor_plugin")
+    target_link_libraries(dozi_glue_compressor_tests PRIVATE DoziGlueCompressor juce::juce_audio_processors juce::juce_dsp)
+    target_compile_definitions(dozi_glue_compressor_tests PRIVATE JucePlugin_Name="DOZI Glue Compressor")
+    target_compile_options(dozi_glue_compressor_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    add_test(NAME dozi_glue_compressor_tests COMMAND dozi_glue_compressor_tests)
+endif()

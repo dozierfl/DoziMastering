@@ -9,6 +9,7 @@ struct CompressorSettings {
     bool bypassed=false; double thresholdDbfs=-18, ratio=1.5, attackMs=30,
         releaseMs=150, makeupGainDb=0, sidechainHpfHz=0;
     bool automaticRelease=false;
+    bool automaticMakeup=false;
 };
 struct LimiterSettings { bool bypassed=false; double inputGainDb=0, ceilingDbtp=-1, lookaheadMs=5, releaseMs=100; bool linked=true, truePeakEnabled=true; };
 struct LimiterProcessingMetrics { double maximumGainReductionDb=0, finalSafetyTrimDb=0; };
