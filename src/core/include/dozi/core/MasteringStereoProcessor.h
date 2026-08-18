@@ -13,6 +13,9 @@ struct StereoProcessorSettings {
 };
 class MasteringStereoProcessor final {
 public:
-    void process(StereoAudioBuffer&, const StereoProcessorSettings&) const;
+    void reset() noexcept { lowSide = 0.0; }
+    void process(StereoAudioBuffer&, const StereoProcessorSettings&);
+private:
+    double lowSide = 0.0;
 };
 }

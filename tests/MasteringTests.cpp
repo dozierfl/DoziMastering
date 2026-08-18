@@ -2,6 +2,7 @@
 #include "dozi/core/MasteringDiagnostics.h"
 #include "dozi/core/MasteringDsp.h"
 #include "dozi/core/MasteringReference.h"
+#include "dozi/core/MasteringProcessorChain.h"
 #include "dozi/core/MasteringStyles.h"
 #include "dozi/core/MasteringTargets.h"
 #include "dozi/core/MasteringVersionStore.h"
@@ -76,6 +77,15 @@ int main(){
     dozi::core::StereoAudioBuffer limited;limited.sampleRate=rate;limited.left={1.5,0.1,0.1};limited.right={0.1,0.1,0.1};
     const auto unlinkedMetrics=dozi::core::TruePeakLimiter{}.process(limited,{false,0,-1,1,50,false,false});(void)unlinkedMetrics;
     expect(std::abs(limited.right[0]-.1)<.05,"unlinked limiting does not unnecessarily reduce the quieter channel");
+
+    dozi::core::MasteringPlan sharedPlan;sharedPlan.modules={
+        {dozi::core::MasteringModuleType::linearPhaseEq,false,{{"band1.frequencyHz",1000},{"band1.gainDb",-1},{"band1.q",1}},{}},
+        {dozi::core::MasteringModuleType::broadbandCompressor,false,{{"thresholdDbfs",-24},{"ratio",3},{"attackMs",10},{"releaseMs",150},{"makeupGainDb",1}},{}},
+        {dozi::core::MasteringModuleType::saturation,false,{{"driveDb",2},{"mix",.5},{"character",1}},{}},
+        {dozi::core::MasteringModuleType::stereoWidthMonoBass,false,{{"widthFactor",.9},{"monoBassCrossoverHz",120}},{}},
+        {dozi::core::MasteringModuleType::truePeakLimiter,false,{{"inputGainDb",1},{"ceilingDbtp",-1},{"lookaheadMs",5},{"releaseMs",100}},{}},
+    };dozi::core::StereoAudioBuffer liveInput;liveInput.sampleRate=rate;liveInput.left.resize(4096);liveInput.right.resize(4096);for(std::size_t i=0;i<liveInput.left.size();++i){liveInput.left[i]=.4*std::sin(2*std::numbers::pi*997*i/rate);liveInput.right[i]=.35*std::sin(2*std::numbers::pi*997*i/rate);}auto exportInput=liveInput;dozi::core::MasteringProcessorChain liveChain,exportChain;liveChain.setPlan(sharedPlan);exportChain.setPlan(sharedPlan);const auto liveTelemetry=liveChain.process(liveInput);const auto exportTelemetry=exportChain.process(exportInput);double chainDifference=0;for(std::size_t i=0;i<liveInput.left.size();++i)chainDifference+=std::abs(liveInput.left[i]-exportInput.left[i])+std::abs(liveInput.right[i]-exportInput.right[i]);expect(chainDifference<1.0e-9,"live audition and export use the identical mastering processor chain");expect(liveTelemetry.size()==sharedPlan.modules.size()&&exportTelemetry.size()==sharedPlan.modules.size(),"every processor stage emits chain telemetry in plan order");
+    dozi::core::MasteringPlan statefulPlan;statefulPlan.modules={sharedPlan.modules[1],sharedPlan.modules[3]};auto continuousInput=liveInput,blockedOutput=liveInput;dozi::core::MasteringProcessorChain continuousChain,blockedChain;continuousChain.setPlan(statefulPlan);blockedChain.setPlan(statefulPlan);(void)continuousChain.process(continuousInput);for(std::size_t start=0;start<blockedOutput.left.size();start+=512){dozi::core::StereoAudioBuffer block;block.sampleRate=rate;const auto end=std::min(blockedOutput.left.size(),start+512);block.left.assign(blockedOutput.left.begin()+static_cast<std::ptrdiff_t>(start),blockedOutput.left.begin()+static_cast<std::ptrdiff_t>(end));block.right.assign(blockedOutput.right.begin()+static_cast<std::ptrdiff_t>(start),blockedOutput.right.begin()+static_cast<std::ptrdiff_t>(end));(void)blockedChain.process(block);std::copy(block.left.begin(),block.left.end(),blockedOutput.left.begin()+static_cast<std::ptrdiff_t>(start));std::copy(block.right.begin(),block.right.end(),blockedOutput.right.begin()+static_cast<std::ptrdiff_t>(start));}double blockDifference=0;for(std::size_t i=0;i<continuousInput.left.size();++i)blockDifference+=std::abs(continuousInput.left[i]-blockedOutput.left[i])+std::abs(continuousInput.right[i]-blockedOutput.right[i]);expect(blockDifference<1.0e-8,"compressor envelopes and mono-bass filters persist across playback blocks");
 
     if(failures==0)std::cout<<"All Dozi Mastering tests passed\n";
     return failures==0?0:1;

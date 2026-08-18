@@ -18,7 +18,7 @@ StereoAudioBuffer transient(){auto a=tone(1000,.08,.35);for(std::size_t i=rate/2
 double difference(const StereoAudioBuffer&a,const StereoAudioBuffer&b){double total=0;for(std::size_t i=0;i<a.left.size();++i)total+=std::abs(a.left[i]-b.left[i])+std::abs(a.right[i]-b.right[i]);return total;}
 double power(const StereoAudioBuffer&a){double total=0;for(std::size_t i=0;i<a.left.size();++i)total+=a.left[i]*a.left[i]+a.right[i]*a.right[i];return total/std::max<std::size_t>(1,a.left.size()*2);}
 double peak(const StereoAudioBuffer&a){double p=0;for(std::size_t i=0;i<a.left.size();++i)p=std::max({p,std::abs(a.left[i]),std::abs(a.right[i])});return p;}
-template<class Processor,class Settings>void expectBypass(const std::string&name,const Processor&processor,Settings settings){auto input=tone(997);const auto original=input;settings.bypassed=true;if constexpr(std::is_void_v<decltype(processor.process(input,settings))>)processor.process(input,settings);else(void)processor.process(input,settings);expect(difference(input,original)<1e-12,name+" bypass is transparent");}
+template<class Processor,class Settings>void expectBypass(const std::string&name,Processor&processor,Settings settings){auto input=tone(997);const auto original=input;settings.bypassed=true;if constexpr(std::is_void_v<decltype(processor.process(input,settings))>)processor.process(input,settings);else(void)processor.process(input,settings);expect(difference(input,original)<1e-12,name+" bypass is transparent");}
 }
 
 int main(){

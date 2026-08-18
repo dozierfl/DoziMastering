@@ -23,7 +23,7 @@ add_test(NAME dozi_renderer_audition_tests COMMAND dozi_renderer_audition_tests)
 add_test(NAME dozi_runtime_text_ascii
     COMMAND "${CMAKE_COMMAND}" -DSOURCE_ROOT=${CMAKE_SOURCE_DIR}
         -P "${CMAKE_CURRENT_SOURCE_DIR}/VerifyRuntimeText.cmake")
-add_test(NAME dozi_explicit_render_only
+add_test(NAME dozi_live_chain_routing
     COMMAND "${CMAKE_COMMAND}" -DSOURCE_ROOT=${CMAKE_SOURCE_DIR}
         -P "${CMAKE_CURRENT_SOURCE_DIR}/VerifyExplicitRenderOnly.cmake")
 if(DOZI_BUILD_GLUE_PLUGIN)

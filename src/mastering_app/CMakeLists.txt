@@ -11,7 +11,6 @@ juce_add_binary_data(DoziMasteringAssets SOURCES
     "${CMAKE_SOURCE_DIR}/assets/hardware/width-mono-bass-skin.png"
     "${CMAKE_SOURCE_DIR}/assets/hardware/true-peak-limiter-skin.png")
 target_sources(DoziMastering PRIVATE Main.cpp MasteringComponent.cpp MasteringComponent.h
-    ../glue_compressor_plugin/GlueCompressorEngine.cpp ../glue_compressor_plugin/GlueCompressorEngine.h
     GlueCompressorHardwarePanel.cpp GlueCompressorHardwarePanel.h
     MasteringHardwareControls.cpp MasteringHardwareControls.h
     MasteringModuleInspector.cpp MasteringModuleInspector.h

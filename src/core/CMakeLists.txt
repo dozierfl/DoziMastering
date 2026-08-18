@@ -12,6 +12,7 @@ add_library(dozi_mastering_core STATIC
     src/MasteringDsp.cpp
     src/MasteringHealth.cpp
     src/MasteringMp3Encoder.cpp
+    src/MasteringProcessorChain.cpp
     src/MasteringProjectStore.cpp
     src/MasteringReference.cpp
     src/MasteringRenderer.cpp

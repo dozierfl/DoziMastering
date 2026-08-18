@@ -6,7 +6,7 @@
 #include "dozi/core/MasteringVersionStore.h"
 #include "MasteringModuleInspector.h"
 #include "MasteringWaveformView.h"
-#include "../glue_compressor_plugin/GlueCompressorEngine.h"
+#include "dozi/core/MasteringProcessorChain.h"
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <atomic>
 #include <thread>
@@ -58,7 +58,7 @@ private:
     bool keyPressed(const juce::KeyPress&, juce::Component*) override;
     [[nodiscard]] dozi::core::MasteringPlan planFromControls() const;
     void applyPlanToControls(const dozi::core::MasteringPlan&);
-    juce::TextButton chooseButton{"Choose Mix"},referenceButton{"Choose Reference"},clearReferenceButton{"Clear Reference"},analyseButton{"Analyze + Plan"},previewButton{"Render Verified Master"},exportButton{"Export Master"},playButton{"Play"},deviceButton{"Audio Device"},cancelButton{"Cancel"};
+    juce::TextButton chooseButton{"Choose Mix"},referenceButton{"Choose Reference"},clearReferenceButton{"Clear Reference"},analyseButton{"Analyze + Plan"},previewButton{"Verify + Measure"},exportButton{"Export Master"},playButton{"Play"},deviceButton{"Audio Device"},cancelButton{"Cancel"};
     juce::TextButton saveVersionButton{"Save Version"},restoreVersionButton{"Restore Version"},compareVersionButton{"Compare Version"};
     juce::TextButton saveProjectButton{"Save Project"},openProjectButton{"Open Project"},recentProjectsButton{"Recent Sessions"};
     juce::TextButton consoleViewButton{"CONSOLE"},waveViewButton{"WAVE"},chainViewButton{"CHAIN"},deliverViewButton{"DELIVER"};
@@ -77,9 +77,8 @@ private:
     juce::AudioBuffer<float> beforePlaybackBuffer, afterPlaybackBuffer;
     std::atomic<float> targetMasteredBlend {0.0f}, masteredPlaybackGain {1.0f}, monitorGain {1.0f};
     std::atomic<float> gluePlaybackInputDbfs {-100.0f}, gluePlaybackOutputDbfs {-100.0f}, gluePlaybackGainReductionDb {0.0f};
-    std::atomic<float> glueThresholdDbfs {-11.4f},glueAttackMs {80.0f},glueReleaseMs {300.0f},glueRatio {1.1f},glueMakeupGainDb {0.0f};
-    std::atomic<bool> glueEnabled {false},glueAutoMakeup {false},glueAutoRelease {false},glueSidechainHpf {false};
-    GlueCompressorEngine glueAuditionEngine;
+    std::shared_ptr<const dozi::core::MasteringPlan> livePlanSnapshot;
+    dozi::core::MasteringProcessorChain liveProcessorChain;
     float currentMasteredBlend = 0.0f, currentMonitorGain = 1.0f;
     double playbackSampleRate = 48000.0;
     std::unique_ptr<juce::FileChooser>chooser; std::unique_ptr<std::thread>worker; std::shared_ptr<dozi::core::CancellationToken>token;

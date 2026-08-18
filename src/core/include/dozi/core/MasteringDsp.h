@@ -46,7 +46,7 @@ struct SaturationSettings {
 };
 using DspCancellation = std::function<bool()>;
 class LinearPhaseEq final { public: void process(StereoAudioBuffer&,const LinearPhaseEqSettings&,DspCancellation={}) const; };
-class BroadbandCompressor final { public: void process(StereoAudioBuffer&,const CompressorSettings&,DspCancellation={}) const; };
+class BroadbandCompressor final { public: void reset() noexcept; void process(StereoAudioBuffer&,const CompressorSettings&,DspCancellation={}); private: double gain=1,lowL=0,lowR=0; };
 class DynamicEqualizer final { public: void process(StereoAudioBuffer&,const DynamicEqSettings&,DspCancellation={}) const; };
 class DeEsser final { public: void process(StereoAudioBuffer&,const DeEsserSettings&,DspCancellation={}) const; };
 class MultibandCompressor final { public: void process(StereoAudioBuffer&,const MultibandCompressorSettings&,DspCancellation={}) const; };
