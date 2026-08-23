@@ -82,7 +82,6 @@ private:
     void paintProcessorDisplay(juce::Graphics&);
     [[nodiscard]] double parameter(const std::string&, double fallback = 0.0) const;
     HardwareKnobLookAndFeel lookAndFeel;
-    juce::Image skin;
     juce::TextButton inButton {"IN"},autoButton {"AUTO"},resetButton {"RESET"};
     juce::TextButton globalListenButton {"LISTEN"},hqButton {"HQ"};
     std::array<juce::TextButton,3> characterButtons {{juce::TextButton{"CLEAN"},juce::TextButton{"WARM"},juce::TextButton{"RICH"}}};

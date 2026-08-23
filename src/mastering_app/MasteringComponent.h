@@ -5,6 +5,7 @@
 #include "dozi/core/MasteringReference.h"
 #include "dozi/core/MasteringVersionStore.h"
 #include "MasteringModuleInspector.h"
+#include "MasteringChainView.h"
 #include "MasteringWaveformView.h"
 #include "dozi/core/MasteringProcessorChain.h"
 #include <juce_audio_utils/juce_audio_utils.h>
@@ -71,6 +72,7 @@ private:
     juce::TextButton doziApplyButton {"Apply Request"},doziUndoButton {"Undo Dozi"};
     juce::TextEditor doziPrompt;
     MasteringModuleInspector moduleInspector;
+    MasteringChainView chainView;
     MasteringWaveformView waveformView;
     double progressValue=0; std::vector<MasteringWaveformView::ChannelEnvelope>waveform; juce::File source,reference,mastered,previewFile,exportedFile;
     std::optional<dozi::core::MasteringAnalysisResult>before,referenceAnalysis,after; std::optional<dozi::core::MasteringPlan>plan; std::optional<dozi::core::MasteringHealthScore>beforeHealth,afterHealth;

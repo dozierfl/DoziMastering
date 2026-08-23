@@ -122,19 +122,8 @@ void SkinnedProcessorHardwarePanel::applyAnalysisSettings(){if(!module)return;mo
 void SkinnedProcessorHardwarePanel::applyStyleSettings(){if(!module)return;module->parameters=styleSettings;rebuild();if(onModuleChanged)onModuleChanged();}
 void SkinnedProcessorHardwarePanel::rebuild(){
     for(auto&control:controls)control.slider->setLookAndFeel(nullptr);controls.clear();for(auto&item:switches)item.button->setLookAndFeel(nullptr);switches.clear();
-    if(!module){skin={};repaint();return;}
+    if(!module){repaint();return;}
     using Type=dozi::core::MasteringModuleType;
-    switch(module->type){
-        case Type::linearPhaseEq:skin={};break;
-        case Type::dynamicEq:skin=juce::ImageFileFormat::loadFrom(BinaryData::dynamiceqskin_png,BinaryData::dynamiceqskin_pngSize);break;
-        case Type::deEsser:skin=juce::ImageFileFormat::loadFrom(BinaryData::deesserskin_png,BinaryData::deesserskin_pngSize);break;
-        case Type::broadbandCompressor:skin=juce::ImageFileFormat::loadFrom(BinaryData::gluecompressorskin_png,BinaryData::gluecompressorskin_pngSize);break;
-        case Type::multibandCompressor:skin=juce::ImageFileFormat::loadFrom(BinaryData::multibandcompressorskin_png,BinaryData::multibandcompressorskin_pngSize);break;
-        case Type::saturation:skin=juce::ImageFileFormat::loadFrom(BinaryData::saturationskin_png,BinaryData::saturationskin_pngSize);break;
-        case Type::stereoWidthMonoBass:skin=juce::ImageFileFormat::loadFrom(BinaryData::widthmonobassskin_png,BinaryData::widthmonobassskin_pngSize);break;
-        case Type::truePeakLimiter:skin=juce::ImageFileFormat::loadFrom(BinaryData::truepeaklimiterskin_png,BinaryData::truepeaklimiterskin_pngSize);break;
-        default:skin={};break;
-    }
     inButton.setToggleState(!module->bypassed,juce::dontSendNotification);autoButton.setEnabled(module->type==Type::broadbandCompressor||!analysisSettings.empty());autoButton.setToggleState(module->type==Type::broadbandCompressor&&parameter("autoMakeup",0)>.5,juce::dontSendNotification);resetButton.setEnabled(module->type==Type::broadbandCompressor||!analysisSettings.empty());
     globalListenButton.setToggleState(std::ranges::any_of(module->parameters,[](const auto&entry){return entry.first.ends_with(".listen")&&entry.second>.5;}),juce::dontSendNotification);
     const auto character=static_cast<int>(module->parameters.contains("character")?module->parameters.at("character"):1);for(std::size_t i=0;i<characterButtons.size();++i)characterButtons[i].setToggleState(static_cast<int>(i)==character,juce::dontSendNotification);
@@ -167,7 +156,8 @@ void SkinnedProcessorHardwarePanel::rebuild(){
     resized();repaint();
 }
 void SkinnedProcessorHardwarePanel::paint(juce::Graphics&g){
-    if(skin.isValid())g.drawImage(skin,getLocalBounds().toFloat());else g.fillAll(juce::Colour(0xff111820));
+    using Type=dozi::core::MasteringModuleType;
+    const auto bounds=getLocalBounds().toFloat();const auto cream=juce::Colour(0xffeee7da),cyan=juce::Colour(0xff38e3d0);g.setGradientFill({juce::Colour(0xff343b42),0,0,juce::Colour(0xff151b21),bounds.getRight(),bounds.getBottom(),false});g.fillAll();for(int x=0;x<getWidth();x+=3){g.setColour(juce::Colours::white.withAlpha((x%11)*.0015f));g.drawVerticalLine(x,0,getHeight());}g.setColour(juce::Colour(0xff080c10));g.fillRect(0.0f,0.0f,38.0f,bounds.getHeight());g.fillRect(bounds.getRight()-38,0.0f,38.0f,bounds.getHeight());const auto screw=[&](float x,float y){g.setColour(juce::Colour(0xff080a0c));g.fillEllipse(x-7,y-7,14,14);g.setColour(juce::Colour(0xff697078));g.drawEllipse(x-7,y-7,14,14,1.2f);g.drawLine(x-4,y,x+4,y,1.2f);};for(auto p:{juce::Point<float>{22,22},{bounds.getRight()-22,22},{22,bounds.getBottom()-22},{bounds.getRight()-22,bounds.getBottom()-22},{22,bounds.getCentreY()},{bounds.getRight()-22,bounds.getCentreY()}})screw(p.x,p.y);juce::String title="PROCESSOR";if(module)switch(module->type){case Type::dynamicEq:title="DYNAMIC EQ";break;case Type::deEsser:title="DE-ESSER";break;case Type::broadbandCompressor:title="GLUE COMPRESSOR";break;case Type::multibandCompressor:title="MULTIBAND COMPRESSOR";break;case Type::saturation:title="SATURATION";break;case Type::stereoWidthMonoBass:title="WIDTH / MONO BASS";break;case Type::truePeakLimiter:title="TRUE PEAK LIMITER";break;case Type::linearPhaseEq:title="CORRECTIVE EQ";break;}g.setColour(cream);g.setFont(juce::FontOptions(24).withStyle("Bold"));g.drawText("D O Z I   /   "+title,75,16,getWidth()-150,34,juce::Justification::centred);g.setColour(cyan.withAlpha(.45f));g.drawHorizontalLine(58,75,getWidth()-75);
     paintProcessorDisplay(g);
     if(module&&module->bypassed){const auto area=inButton.getBounds().toFloat().reduced(inButton.getWidth()*.18f);g.setColour(juce::Colour(0xff071016).withAlpha(.94f));g.fillEllipse(area);g.setColour(juce::Colour(0xff323b42));g.drawEllipse(area,3.0f);}
     for(const auto&item:switches)if(item.button->isVisible()){
@@ -178,6 +168,7 @@ void SkinnedProcessorHardwarePanel::paint(juce::Graphics&g){
     for(const auto*button:{&globalListenButton,&hqButton,&characterButtons[0],&characterButtons[1],&characterButtons[2]})if(button->isVisible()){
         const auto area=button->getBounds().toFloat();if(button->getToggleState()){g.setColour(juce::Colour(0xffffb23e).withAlpha(.82f));g.drawRoundedRectangle(area.reduced(2),5,3);}else{g.setColour(juce::Colour(0xff071016).withAlpha(.30f));g.fillRoundedRectangle(area.reduced(4),4);}
     }
+    if(module){g.setColour(cream.withAlpha(.78f));g.setFont(juce::FontOptions(11).withStyle("Bold"));for(const auto&control:controls)if(control.slider->isVisible()){auto text=juce::String(control.key);text=text.replace("frequencyHz","FREQUENCY").replace("thresholdDbfs","THRESHOLD").replace("maximumReductionDb","MAX REDUCTION").replace("makeupGainDb","MAKEUP").replace("attackMs","ATTACK").replace("releaseMs","RELEASE").replace("lookaheadMs","LOOKAHEAD").replace("ceilingDbtp","CEILING").replace("inputGainDb","INPUT").replace("widthFactor","WIDTH").replace("monoBassCrossoverHz","MONO BASS").replace("outputTrimDb","OUTPUT TRIM").replace("driveDb","DRIVE");g.drawFittedText(text.toUpperCase(),control.slider->getBounds().translated(0,-15).withHeight(16),juce::Justification::centred,1);}}
 }
 
 double SkinnedProcessorHardwarePanel::parameter(const std::string& key,double fallback)const{

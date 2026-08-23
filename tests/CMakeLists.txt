@@ -9,7 +9,8 @@ add_test(NAME dozi_processor_control_tests COMMAND dozi_processor_control_tests)
 add_executable(dozi_hardware_control_tests HardwareControlTests.cpp
     "${CMAKE_SOURCE_DIR}/src/mastering_app/GlueCompressorHardwarePanel.cpp"
     "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringHardwareControls.cpp"
-    "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringModuleInspector.cpp")
+    "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringModuleInspector.cpp"
+    "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringChainView.cpp")
 target_include_directories(dozi_hardware_control_tests PRIVATE "${CMAKE_SOURCE_DIR}/src/mastering_app")
 target_link_libraries(dozi_hardware_control_tests PRIVATE Dozi::Core DoziMasteringAssets
     juce::juce_gui_extra juce::juce_recommended_config_flags)
