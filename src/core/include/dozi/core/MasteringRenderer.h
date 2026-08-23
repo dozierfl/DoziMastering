@@ -3,6 +3,7 @@
 #include "dozi/core/MasteringHealth.h"
 #include <array>
 #include <functional>
+#include <string>
 namespace dozi::core {
 struct ProcessorTelemetry {
     MasteringModuleType type=MasteringModuleType::linearPhaseEq;
@@ -13,6 +14,6 @@ struct ProcessorTelemetry {
     std::size_t peakEventCount=0;
 };
 using ProcessorTelemetryCallback=std::function<void(const ProcessorTelemetry&)>;
-struct MasteringRenderResult { std::filesystem::path output; MasteringAnalysisResult before,after; MasteringHealthScore beforeHealth,afterHealth; double limiterMaximumGainReductionDb=0, limiterSafetyTrimDb=0, limiterInputGainDb=0; std::vector<ProcessorTelemetry> telemetry; };
+struct MasteringRenderResult { std::filesystem::path output; MasteringAnalysisResult before,after; MasteringHealthScore beforeHealth,afterHealth; double limiterMaximumGainReductionDb=0, limiterSafetyTrimDb=0, limiterInputGainDb=0; std::vector<ProcessorTelemetry> telemetry; std::vector<std::string> deliveryWarnings; };
 class MasteringRenderer final { public: [[nodiscard]] MasteringRenderResult render(const std::filesystem::path&,const std::filesystem::path&,const MasteringPlan&,const CancellationToken& cancellation = {},bool auditionMode = false,ProcessorTelemetryCallback = {}) const; };
 }

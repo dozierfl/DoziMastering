@@ -25,7 +25,7 @@ int main(){
     {
         LinearPhaseEq processor;LinearPhaseEqSettings base{false,{{1000,-6,1}},257};expectBypass("Corrective EQ",processor,base);
         auto input=tone(1000),deep=input,shallow=input,narrow=input;processor.process(deep,base);auto less=base;less.bands[0].gainDb=-2;processor.process(shallow,less);auto q=base;q.bands[0].q=8;processor.process(narrow,q);
-        expect(power(deep)<power(shallow),"Corrective EQ gain controls cut depth");expect(difference(deep,narrow)>1e-3,"Corrective EQ Q changes bandwidth");auto offTarget=tone(5000);const auto offOriginal=offTarget;processor.process(offTarget,base);expect(difference(deep,input)>difference(offTarget,offOriginal),"Corrective EQ frequency targets the selected band");
+        expect(power(deep)<power(shallow),"Corrective EQ gain controls cut depth");expect(difference(deep,narrow)>1e-3,"Corrective EQ Q changes bandwidth");auto boosted=input;auto boost=base;boost.bands[0].gainDb=6;processor.process(boosted,boost);expect(power(boosted)>power(input),"Corrective EQ supports the hardware boost range without rejecting live audio");auto offTarget=tone(5000);const auto offOriginal=offTarget;processor.process(offTarget,base);expect(difference(deep,input)>difference(offTarget,offOriginal),"Corrective EQ frequency targets the selected band");
     }
     {
         DynamicEqualizer processor;DynamicEqSettings base{false,{{1000,1,-36,8,2,100,true,false}}};expectBypass("Dynamic EQ",processor,base);

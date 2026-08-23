@@ -2,6 +2,7 @@
 #include "dozi/core/MasteringStereoProcessor.h"
 #include <vector>
 #include <functional>
+#include <array>
 namespace dozi::core {
 struct CorrectiveEqBand { double frequencyHz=1000, gainDb=0, q=4; };
 struct LinearPhaseEqSettings { bool bypassed=false; std::vector<CorrectiveEqBand> bands; int taps=513; };
@@ -19,6 +20,7 @@ struct DynamicEqBand {
     bool enabled=true, listen=false;
 };
 struct DynamicEqSettings { bool bypassed=false; std::vector<DynamicEqBand> bands; };
+struct DynamicBandState { double left1=0,left2=0,right1=0,right2=0,envelope=0; };
 struct DeEsserSettings {
     bool bypassed=false; double frequencyHz=6500, q=1, thresholdDbfs=-30,
         ratio=3, maximumReductionDb=6, attackMs=2, releaseMs=80;
@@ -45,11 +47,18 @@ struct SaturationSettings {
     double outputCeilingDbfs=-0.1;
 };
 using DspCancellation = std::function<bool()>;
-class LinearPhaseEq final { public: void process(StereoAudioBuffer&,const LinearPhaseEqSettings&,DspCancellation={}) const; };
+class LinearPhaseEq final {
+public:
+    void reset() noexcept;
+    void process(StereoAudioBuffer&,const LinearPhaseEqSettings&,DspCancellation={});
+private:
+    struct BandState { double left1=0,left2=0,right1=0,right2=0; };
+    std::vector<BandState> states;
+};
 class BroadbandCompressor final { public: void reset() noexcept; void process(StereoAudioBuffer&,const CompressorSettings&,DspCancellation={}); private: double gain=1,lowL=0,lowR=0; };
-class DynamicEqualizer final { public: void process(StereoAudioBuffer&,const DynamicEqSettings&,DspCancellation={}) const; };
-class DeEsser final { public: void process(StereoAudioBuffer&,const DeEsserSettings&,DspCancellation={}) const; };
-class MultibandCompressor final { public: void process(StereoAudioBuffer&,const MultibandCompressorSettings&,DspCancellation={}) const; };
-class HarmonicSaturator final { public: void process(StereoAudioBuffer&,const SaturationSettings&,DspCancellation={}) const; };
-class TruePeakLimiter final { public: [[nodiscard]] LimiterProcessingMetrics process(StereoAudioBuffer&,const LimiterSettings&,DspCancellation={}) const; [[nodiscard]] double truePeakDbtp(const StereoAudioBuffer&) const; };
+class DynamicEqualizer final { public: void reset() noexcept; void process(StereoAudioBuffer&,const DynamicEqSettings&,DspCancellation={}); private: std::vector<DynamicBandState> states; };
+class DeEsser final { public: void reset() noexcept; void process(StereoAudioBuffer&,const DeEsserSettings&,DspCancellation={}); private: DynamicBandState state; };
+class MultibandCompressor final { public: void reset() noexcept; void process(StereoAudioBuffer&,const MultibandCompressorSettings&,DspCancellation={}); private: std::array<double,6> crossoverStates{};std::array<double,4> gains{1,1,1,1};std::array<std::vector<double>,8> scratch; };
+class HarmonicSaturator final { public: void reset() noexcept; void process(StereoAudioBuffer&,const SaturationSettings&,DspCancellation={}); private: double previousLeft=0,previousRight=0,inputPower=0,outputPower=0,dcLeft=0,dcRight=0; };
+class TruePeakLimiter final { public: void reset() noexcept; [[nodiscard]] LimiterProcessingMetrics process(StereoAudioBuffer&,const LimiterSettings&,DspCancellation={}); [[nodiscard]] double truePeakDbtp(const StereoAudioBuffer&) const; private: double linkedGain=1,leftGain=1,rightGain=1; };
 }
