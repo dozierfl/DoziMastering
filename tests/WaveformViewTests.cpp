@@ -15,6 +15,7 @@ MasteringWaveformView::ChannelEnvelope envelope(float polarity) {
 int main() {
     MasteringWaveformView view;
     view.setSize(800, 360);
+    expect(view.waveformPlotBounds().getX()>=52.0f, "waveform plot reserves a dedicated left-side ruler panel");
     view.setWaveform({envelope(1.0f)}, 180.0);
     expect(view.displayedChannelCount() == 1, "mono input displays one waveform lane");
     expect(std::abs(MasteringWaveformView::amplitudeForDbfs(-6.0)-0.501187f)<0.0001f, "waveform ruler converts -6 dBFS to half-scale amplitude");

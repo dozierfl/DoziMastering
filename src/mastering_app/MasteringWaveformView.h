@@ -22,6 +22,7 @@ public:
     [[nodiscard]] double selectionEndSeconds() const;
     [[nodiscard]] int displayedChannelCount() const { return static_cast<int>(waveform.size()); }
     [[nodiscard]] static float amplitudeForDbfs(double dbfs);
+    [[nodiscard]] juce::Rectangle<float> waveformPlotBounds() const;
     std::function<void(double)> onSeek;
     std::function<void(double,double)> onSelectionChanged;
     void paint(juce::Graphics&) override;
