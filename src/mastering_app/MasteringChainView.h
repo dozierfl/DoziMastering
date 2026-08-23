@@ -15,7 +15,9 @@ public:
     void openProcessorEditor(dozi::core::MasteringModuleType);
     void closeAllEditors();
     [[nodiscard]] std::size_t openEditorCount() const;
+    [[nodiscard]] static constexpr std::size_t editorCapacity() { return 8; }
     [[nodiscard]] juce::Rectangle<int> processorBounds(std::size_t) const;
+    [[nodiscard]] juce::Component* processorPanel(std::size_t) const;
     std::function<void()> onPlanChanged;
     void paint(juce::Graphics&) override;
     void resized() override;
