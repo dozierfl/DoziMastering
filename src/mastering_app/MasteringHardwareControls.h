@@ -7,6 +7,8 @@
 #include <functional>
 #include <map>
 
+void ensureDynamicEqParameterSchema(dozi::core::MasteringModulePlan&);
+
 class HardwareKnobLookAndFeel final : public juce::LookAndFeel_V4 {
 public:
     HardwareKnobLookAndFeel();

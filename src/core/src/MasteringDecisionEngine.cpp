@@ -1,6 +1,7 @@
 #include "dozi/core/MasteringDecisionEngine.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <stdexcept>
 
@@ -69,6 +70,19 @@ MasteringPlan MasteringDecisionEngine::createPlan(
         dynamicEqualizer.parameters[prefix + "attackMs"] = 10.0;
         dynamicEqualizer.parameters[prefix + "releaseMs"] = 120.0;
         dynamicEqualizer.parameters[prefix + "enabled"] = 1.0;
+        dynamicEqualizer.parameters[prefix + "listen"] = 0.0;
+    }
+    dynamicEqualizer.bypassed = dynamicBand == 0;
+    static constexpr std::array<double, 4> defaultFrequencies {120.0, 500.0, 2500.0, 8000.0};
+    while (dynamicBand < 4) {
+        const auto prefix = "band" + std::to_string(++dynamicBand) + ".";
+        dynamicEqualizer.parameters[prefix + "frequencyHz"] = defaultFrequencies[static_cast<std::size_t>(dynamicBand - 1)];
+        dynamicEqualizer.parameters[prefix + "gainDb"] = 0.0;
+        dynamicEqualizer.parameters[prefix + "q"] = 1.2;
+        dynamicEqualizer.parameters[prefix + "thresholdDbfs"] = -26.0;
+        dynamicEqualizer.parameters[prefix + "attackMs"] = 10.0;
+        dynamicEqualizer.parameters[prefix + "releaseMs"] = 120.0;
+        dynamicEqualizer.parameters[prefix + "enabled"] = 0.0;
         dynamicEqualizer.parameters[prefix + "listen"] = 0.0;
     }
     plan.modules.push_back(std::move(dynamicEqualizer));

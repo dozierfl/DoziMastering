@@ -134,7 +134,7 @@ MasteringPlan MasteringReferenceMatcher::createPhase2Plan(
     if(reference)match=createPlan(source,*reference,matchConfig);
     std::vector<MasteringModulePlan> modules;
     modules.push_back(*module(base.modules,MasteringModuleType::linearPhaseEq));
-    const auto* dynamic=match?module(match->proposedModules,MasteringModuleType::dynamicEq):nullptr;
+    const auto* dynamic=match?module(match->proposedModules,MasteringModuleType::dynamicEq):module(base.modules,MasteringModuleType::dynamicEq);
     modules.push_back(dynamic?*dynamic:MasteringModulePlan{MasteringModuleType::dynamicEq,true,{},{}});
     modules.push_back({MasteringModuleType::deEsser,true,{{"frequencyHz",6500},{"q",1},{"thresholdDbfs",-30},{"ratio",3},{"maximumReductionDb",6},{"attackMs",2},{"releaseMs",80},{"listen",0}}, {}});
     modules.push_back(*module(base.modules,MasteringModuleType::broadbandCompressor));

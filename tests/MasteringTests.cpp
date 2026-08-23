@@ -31,6 +31,8 @@ int main(){
     expect(plan.styleId=="suno-wav-remaster","AI remaster preset is applied to the plan");
     expect(plan.targetId=="streaming-normal"&&plan.targetIntegratedLufs==-14.0,"processing styles do not replace the selected delivery target");
     expect(plan.modules.size()==8,"analysis creates the complete eight-processor live mastering chain");
+    const auto dynamic=std::ranges::find(plan.modules,dozi::core::MasteringModuleType::dynamicEq,&dozi::core::MasteringModulePlan::type);expect(dynamic!=plan.modules.end()&&!dynamic->bypassed&&dynamic->parameters.size()==32,"resonance analysis creates an active four-band Dynamic EQ schema");
+    auto noResonanceAnalysis=analysis;noResonanceAnalysis.resonances.clear();const auto noResonancePlan=dozi::core::MasteringReferenceMatcher{}.createPhase2Plan(noResonanceAnalysis,{});const auto emptyDynamic=std::ranges::find(noResonancePlan.modules,dozi::core::MasteringModuleType::dynamicEq,&dozi::core::MasteringModulePlan::type);expect(emptyDynamic!=noResonancePlan.modules.end()&&emptyDynamic->bypassed&&emptyDynamic->parameters.size()==32,"Dynamic EQ retains four editable bands when analysis finds no resonance");
     expect(plan.truePeakCeilingDbtp<=-1.0,"AI remaster preset retains a safe true-peak ceiling");
     const auto compressor=std::ranges::find(plan.modules,dozi::core::MasteringModuleType::broadbandCompressor,&dozi::core::MasteringModulePlan::type);
     expect(compressor!=plan.modules.end()&&compressor->bypassed,"AI remaster preset avoids additional broadband compression");

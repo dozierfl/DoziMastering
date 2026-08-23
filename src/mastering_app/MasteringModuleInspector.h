@@ -13,6 +13,7 @@ public:
     MasteringModuleInspector();
     void setPlan(dozi::core::MasteringPlan*);
     void selectModule(dozi::core::MasteringModuleType);
+    [[nodiscard]] juce::Slider* technicalControl(const std::string&) const;
     void setTelemetry(const std::vector<dozi::core::ProcessorTelemetry>&);
     void updateTelemetry(const dozi::core::ProcessorTelemetry&);
     void updateGlueLiveMetering(double inputDbfs,double outputDbfs,double gainReductionDb,bool active);

@@ -201,6 +201,7 @@ dozi::core::MasteringPlan MasteringComponent::planFromControls()const{
 
 void MasteringComponent::applyPlanToControls(const dozi::core::MasteringPlan& value){
     livePlanSnapshotDirty=true;
+    if(plan)for(auto&module:plan->modules)ensureDynamicEqParameterSchema(module);
     chainView.setPlan(plan?&*plan:nullptr);
     target.setValue(value.targetIntegratedLufs,juce::dontSendNotification);ceiling.setValue(value.truePeakCeilingDbtp,juce::dontSendNotification);
     const auto&styles=dozi::core::factoryMasteringStyles();const auto style=std::ranges::find(styles,value.styleId,&dozi::core::MasteringStylePreset::id);stylePreset.setSelectedItemIndex(style==styles.end()?1:static_cast<int>(std::distance(styles.begin(),style)),juce::dontSendNotification);
