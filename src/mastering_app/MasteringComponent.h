@@ -72,7 +72,7 @@ private:
     juce::TextEditor doziPrompt;
     MasteringModuleInspector moduleInspector;
     MasteringWaveformView waveformView;
-    double progressValue=0; std::vector<float>waveform; juce::File source,reference,mastered,previewFile,exportedFile;
+    double progressValue=0; std::vector<MasteringWaveformView::ChannelEnvelope>waveform; juce::File source,reference,mastered,previewFile,exportedFile;
     std::optional<dozi::core::MasteringAnalysisResult>before,referenceAnalysis,after; std::optional<dozi::core::MasteringPlan>plan; std::optional<dozi::core::MasteringHealthScore>beforeHealth,afterHealth;
     juce::AudioFormatManager formats; std::unique_ptr<juce::AudioFormatReaderSource>beforeReader,afterReader; juce::AudioTransportSource beforeTransport,afterTransport;
     juce::AudioBuffer<float> beforePlaybackBuffer, afterPlaybackBuffer;

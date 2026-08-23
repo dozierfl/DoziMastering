@@ -16,6 +16,13 @@ target_link_libraries(dozi_hardware_control_tests PRIVATE Dozi::Core DoziMasteri
 target_compile_definitions(dozi_hardware_control_tests PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0)
 target_compile_options(dozi_hardware_control_tests PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME dozi_hardware_control_tests COMMAND dozi_hardware_control_tests)
+add_executable(dozi_waveform_view_tests WaveformViewTests.cpp
+    "${CMAKE_SOURCE_DIR}/src/mastering_app/MasteringWaveformView.cpp")
+target_include_directories(dozi_waveform_view_tests PRIVATE "${CMAKE_SOURCE_DIR}/src/mastering_app")
+target_link_libraries(dozi_waveform_view_tests PRIVATE juce::juce_gui_extra juce::juce_recommended_config_flags)
+target_compile_definitions(dozi_waveform_view_tests PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0)
+target_compile_options(dozi_waveform_view_tests PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME dozi_waveform_view_tests COMMAND dozi_waveform_view_tests)
 add_executable(dozi_renderer_audition_tests RendererAuditionTests.cpp)
 target_link_libraries(dozi_renderer_audition_tests PRIVATE Dozi::Core)
 target_compile_options(dozi_renderer_audition_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
