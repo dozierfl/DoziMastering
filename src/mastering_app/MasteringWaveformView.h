@@ -21,6 +21,7 @@ public:
     [[nodiscard]] double selectionStartSeconds() const;
     [[nodiscard]] double selectionEndSeconds() const;
     [[nodiscard]] int displayedChannelCount() const { return static_cast<int>(waveform.size()); }
+    [[nodiscard]] static float amplitudeForDbfs(double dbfs);
     std::function<void(double)> onSeek;
     std::function<void(double,double)> onSelectionChanged;
     void paint(juce::Graphics&) override;
