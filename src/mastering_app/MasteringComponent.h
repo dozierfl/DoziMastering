@@ -44,7 +44,7 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray&) override; void filesDropped(const juce::StringArray&,int,int) override;
 private:
     using juce::Component::keyPressed;
-    void timerCallback() override; void choose(); void chooseReference(); void clearReference(); void load(const juce::File&); void analyse(); void renderPreview(); void exportMaster(); void exportMasterTo(bool mp3,int bitRateKbps,bool createNew=false); void renderExportTo(const juce::File&,bool mp3,int bitRateKbps); void cancel();
+    void timerCallback() override; void choose(); void chooseReference(); void clearReference(); void load(const juce::File&); void analyse(); void renderPreview(); void exportMaster(); void exportMasterTo(bool mp3,int bitRateKbps,bool createNew=false,dozi::core::MasteringExportOptions options={}); void renderExportTo(const juce::File&,bool mp3,int bitRateKbps,dozi::core::MasteringExportOptions options={}); void cancel();
     void saveVersion(); void restoreVersion(); void compareVersion();
     void saveProject(); void openProject(); void openProjectFile(const juce::File&); void applyProject(dozi::core::MasteringProject);
     void saveRecoverySession(); void restoreRecoverySession(); void showRecentSessions(); void addRecentSession(const juce::File&); void loadRecentSessions();
@@ -59,7 +59,7 @@ private:
     void installTransportKeyListeners(juce::Component& parent);
     bool keyPressed(const juce::KeyPress&, juce::Component*) override;
     [[nodiscard]] dozi::core::MasteringPlan planFromControls() const;
-    void applyPlanToControls(const dozi::core::MasteringPlan&);
+    void applyPlanToControls(const dozi::core::MasteringPlan&, bool rebuildEditors = true);
     juce::TextButton chooseButton{"Choose Mix"},referenceButton{"Choose Reference"},clearReferenceButton{"Clear Reference"},analyseButton{"Analyze + Plan"},previewButton{"Verify + Measure"},exportButton{"Export Master"},playButton{"Play"},deviceButton{"Audio Device"},cancelButton{"Cancel"};
     juce::TextButton saveVersionButton{"Save Version"},restoreVersionButton{"Restore Version"},compareVersionButton{"Compare Version"};
     juce::TextButton saveProjectButton{"Save Project"},openProjectButton{"Open Project"},recentProjectsButton{"Recent Sessions"};
@@ -96,6 +96,8 @@ private:
     bool verificationCurrent = false;
     std::vector<std::string> deliveryWarnings;
     bool playbackWasRunning = false;
+    bool processorUiSyncPending = false;
+    bool processorPlanChanged = false;
     View currentView = View::console;
     double limiterMaximumGainReductionDb = 0.0, limiterSafetyTrimDb = 0.0;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MasteringComponent)

@@ -12,6 +12,7 @@ class MasteringModuleInspector final : public juce::Component {
 public:
     MasteringModuleInspector();
     void setPlan(dozi::core::MasteringPlan*);
+    void refreshFromPlan();
     void selectModule(dozi::core::MasteringModuleType);
     [[nodiscard]] juce::Slider* technicalControl(const std::string&) const;
     void setTelemetry(const std::vector<dozi::core::ProcessorTelemetry>&);
@@ -20,7 +21,7 @@ public:
     std::function<void()> onPlanChanged;
     void resized() override;
 private:
-    struct ParameterControl { std::string key; std::unique_ptr<juce::Label> label; std::unique_ptr<juce::Slider> slider; };
+    struct ParameterControl { std::string key; std::unique_ptr<juce::Label> label; std::unique_ptr<PrimaryDragSlider> slider; };
     void rebuildModules();
     void rebuildParameters();
     void showHardware(bool, bool rememberPreference = true);

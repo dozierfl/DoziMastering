@@ -8,6 +8,16 @@
 #include <map>
 
 void ensureDynamicEqParameterSchema(dozi::core::MasteringModulePlan&);
+juce::String hardwareScaleText(double);
+
+class PrimaryDragSlider final : public juce::Slider {
+public:
+    void mouseDown(const juce::MouseEvent& event) override { primaryDrag=event.mods.isLeftButtonDown();if(primaryDrag)juce::Slider::mouseDown(event); }
+    void mouseDrag(const juce::MouseEvent& event) override { if(primaryDrag&&event.mods.isLeftButtonDown())juce::Slider::mouseDrag(event); }
+    void mouseUp(const juce::MouseEvent& event) override { if(primaryDrag)juce::Slider::mouseUp(event);primaryDrag=false; }
+private:
+    bool primaryDrag=false;
+};
 
 class HardwareKnobLookAndFeel final : public juce::LookAndFeel_V4 {
 public:
@@ -35,7 +45,7 @@ private:
         std::string gainKey;
         std::string frequencyKey;
         std::string qKey;
-        juce::Slider gain;
+        PrimaryDragSlider gain;
         juce::Label name;
         juce::Label frequency;
     };
@@ -52,7 +62,7 @@ private:
     juce::TextButton bandInButton {"BAND IN"},resetBandButton {"RESET BAND"};
     juce::Label title,status,selectedBandLabel;
     std::array<juce::Label,3> detailLabels;
-    std::array<juce::Slider,3> detailControls;
+    std::array<PrimaryDragSlider,3> detailControls;
     std::array<BandControl,4> bands;
     std::size_t selectedBand = 0;
     bool updatingControls = false;
@@ -76,7 +86,7 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 private:
-    struct Control { std::string key; std::unique_ptr<juce::Slider> slider; };
+    struct Control { std::string key; std::unique_ptr<PrimaryDragSlider> slider; };
     struct Switch { std::string key; double onValue=1,offValue=0; std::unique_ptr<juce::TextButton> button; };
     void rebuild();
     void applyAnalysisSettings();
@@ -86,6 +96,7 @@ private:
     HardwareKnobLookAndFeel lookAndFeel;
     juce::TextButton inButton {"IN"},autoButton {"AUTO"},resetButton {"RESET"};
     juce::TextButton globalListenButton {"LISTEN"},hqButton {"HQ"};
+    std::array<juce::TextButton,4> dynamicBandButtons {{juce::TextButton{"BAND 1"},juce::TextButton{"BAND 2"},juce::TextButton{"BAND 3"},juce::TextButton{"BAND 4"}}};
     std::array<juce::TextButton,3> characterButtons {{juce::TextButton{"CLEAN"},juce::TextButton{"WARM"},juce::TextButton{"RICH"}}};
     std::vector<Control> controls;
     std::vector<Switch> switches;
@@ -94,4 +105,5 @@ private:
     std::map<std::string,double> styleSettings;
     std::optional<dozi::core::ProcessorTelemetry> telemetry;
     std::vector<dozi::core::ProcessorTelemetry> availableTelemetry;
+    std::size_t selectedDynamicBand = 0;
 };

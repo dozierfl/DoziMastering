@@ -2,6 +2,7 @@
 
 #include "dozi/core/MasteringDecisionEngine.h"
 #include "dozi/core/MasteringRenderer.h"
+#include "MasteringHardwareControls.h"
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <array>
 #include <functional>
@@ -35,7 +36,7 @@ private:
     std::optional<dozi::core::ProcessorTelemetry> telemetry;
     double liveInputDbfs=-100.0,liveOutputDbfs=-100.0,liveGainReductionDb=0.0;
     bool liveMeteringActive=false;
-    juce::Slider threshold,attack,release,ratio,makeup;
+    PrimaryDragSlider threshold,attack,release,ratio,makeup;
     juce::ToggleButton inButton,autoButton,autoReleaseButton,hpfButton;
     juce::TextButton resetButton{"RESET"};
     bool refreshing=false;
